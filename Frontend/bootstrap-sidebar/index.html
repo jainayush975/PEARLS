@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+
+        <title>Collapsible sidebar using Bootstrap 3</title>
+
+         <!-- Bootstrap CSS CDN -->
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+        <!-- Our Custom CSS -->
+        <link rel="stylesheet" href="style.css">
+        <!-- <link rel="stylesheet" type="text/css" href="css1/grid.css" media="all">
+        <link rel="stylesheet" type="text/css" href="css1/fonts.css" media="all">
+        <link rel="stylesheet" type="text/css" href="css1/demo.css" media="all"> -->
+    </head>
+    <body>
+
+    <script src="three.js"></script>
+    <script src="font.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <script src="index.js"></script>
+    <script src="controller.js"></script>
+    <script src="upload_script.js"></script>
+
+
+        <div class="wrapper">
+            <!-- Sidebar Holder -->
+            <!-- <div id="scrollable"> -->
+            <div id="sidebar">
+                <div id="full_sidebar">
+                    <div class="sidebar-header">
+                        <h3>PEARL Data Visualisation</h3>
+                    </div>
+
+                    <ul class="list-unstyled components">
+                        <li><a>
+                            <form>
+                                <!-- <div class="row"> -->
+                                    <!-- <div class="column-small-12 padd0 align-center"> -->
+                                    <!-- </div> -->
+                                    <div class="column-small-12 padd0">
+                                        <input type="file" name="upl" id="upl" />
+                                    </div>
+                                <!-- </div> -->
+                            </form>
+                        </a></li>
+                        <li><a>
+                            <div id="drop-box">
+                                select Files
+                                <!-- <p>Select Files</p> -->
+                            </div>
+                        </a></li>
+                    </ul>
+                    <ul class="list-unstyled components">
+                        <li><a onclick="document.getElementById('id01').style.display='block'">Get Form</a></li>
+                        <li><a onclick="document.getElementById('sfeature').style.display='block'">Search Feature</a></li>
+                        <li> <a onclick="changeGrid()"> Change axis Style </a> </li>
+                        <li><a onclick="spreadAlert()">Spread</a></li>
+                        <li><input id="slider" type="range" min="10" max="100" step="5" oninput="sliderChange(this.value)"></li>
+                        <li><a onclick="undo()">Undo</a></li>
+                    </ul>
+                    <ul class="list-unstyled components" id="cluster-list">
+                    </ul>
+                </div>
+            </div>
+
+            <div id="content">
+                <div>
+                    <canvas id="mycanvas"></canvas>
+                </div>
+                <div id="bottom-bar">
+                    <select name="Camera View" id="camera_view">
+                        <option value="PX">From Positive X</option>
+                        <option value="NX">From Negative X</option>
+                        <option value="PY">From Positive Y</option>
+                        <option value="NY">From Negative Y</option>
+                        <option value="PZ">From Positive Z</option>
+                        <option value="NZ">From Negative Z</option>
+                    </select>
+
+                    <script>
+                        var drop_down = document.getElementById("camera_view");
+                        drop_down.onchange = function() {
+                            update_camera(drop_down.value);
+                        };
+
+                    </script>
+
+                    <h4 id="he4">
+                        General Instructions
+                    </h4>
+
+                    <ul id="list1">
+                        <li>Upload csv file from top left corner upload file option.</li>
+                        <li>Use form to provide paramenters and choosing clustering algorithm.</li>
+                        <li>Cluster list would be in left sidebar after uploading file and filling Form.</li>
+                        <li>Basic features are accessible on left sidebar for use. They are self explanatory.</li>
+                        <li>By left-click on bead you get Bead Info in right sidebar and By right click you can delete Bead.</li>
+                    </ul>
+
+                    <!-- <h3> Upload File </h3> -->
+                    <!-- <div id="atrri-box">
+                        Gogi
+                    </div> -->
+                </div>
+            </div>
+
+            <div id="sidebar1">
+                    <!-- <div class="sidebar-header">
+                        <h3> BEAD Info </h3>
+                    </div> -->
+                    <div id="infoBox">
+                    </div>
+            </div>
+
+        </div>
+        <div id="id01" class="modal" class="form_modal">
+
+          <form class="modal-content animate" onsubmit="return makeClusterDB()">
+              <div class="imgcontainer">
+                <span onclick="document.getElementById('id01').style.display='none'" class="close" title="Close Modal">&times;</span>
+                <!-- <img src="img_avatar2.png" alt="Avatar" class="avatar"> -->
+              </div>
+
+            <div class="container">
+              <label for="calgo"><b>Clustering Algorithm</b></label>
+              <select name="calgo" class="form_select" id="calg">
+                <option value="kmean">Kmeans</option>
+                <option value="KrNN">KrNN</option>
+              </select>
+              <br>
+
+              <label for="noclus"><b>Number Of Cluster</b></label>
+              <input type="number" placeholder="Number of Cluster" name="noclus" id="number-of-cluster" class="form_select" required>
+              <br>
+
+              <label for="balgo"><b>Bead Forming Algorithm</b></label>
+              <select name="balgo" class="form_select" id="balg">
+                <option value="kmean">Kmeans</option>
+                <option value="KrNN">KrNN</option>
+              </select>
+              <br>
+
+              <label for="nobeads"><b>Number Of Beads</b></label>
+              <input type="number" placeholder="Number of Cluster" name="nobeads" id="number-of-beads" class="form_select" required>
+              <br>
+
+            </div>
+
+            <div class="container" style="background-color:#f1f1f1">
+              <button type="button" onclick="document.getElementById('id01').style.display='none'" class="cancelbtn">Cancel</button>
+              <span class="psw"><button type="submit">Submit</button></span>
+            </div>
+          </form>
+        </div>
+
+        <div id="sfeature" class="modal" class="form_modal">
+
+          <form class="modal-content animate" onsubmit="return searchVector()">
+              <div class="imgcontainer">
+                <span onclick="document.getElementById('sfeature').style.display='none'" class="close" title="Close Modal">&times;</span>
+                <!-- <img src="img_avatar2.png" alt="Avatar" class="avatar"> -->
+              </div>
+
+            <div class="container" id="sfeature_container">
+                <label for="feat"><b> Vector To Search (Provide comma seperated atributes in their order)</b></label>
+                <input type="text" placeholder="Provide comma seperated atributes in their order" name="feat" id="feature_vector" class="form_select" required>
+            </div>
+
+            <div class="container" style="background-color:#f1f1f1">
+              <button type="button" onclick="document.getElementById('sfeature').style.display='none'" class="cancelbtn">Cancel</button>
+              <span class="psw"><button type="submit">Submit</button></span>
+            </div>
+          </form>
+        </div>
+
+        <div id="info_modal" class="modal">
+            <div class="imgcontainer">
+              <span onclick="document.getElementById('info_modal').style.display='none'" class="close" title="Close Modal">&times;</span>
+              <!-- <img src="img_avatar2.png" alt="Avatar" class="avatar"> -->
+            </div>
+            <div id="infoBox1">
+            </div>
+
+        </div>
+
+        <script>
+            document.getElementById('slider').value = 10;
+            // Get the modal
+            var modal = document.getElementById('id01');
+            var modal1 = document.getElementById('sfeature');
+            var modal2 = document.getElementById('info_modal');
+
+            // When the user clicks anywhere outside of the modal, close it
+            window.onclick = function(event) {
+                if (event.target == modal) {
+                    modal.style.display = "none";
+                    modal1.style.display = "none";
+                    modal2.style.display = "none";
+                }
+            }
+        </script>
+
+
+        <div class="modal"></div>
+
+
+
+        <!-- jQuery CDN -->
+         <script src="https://code.jquery.com/jquery-1.12.0.min.js"></script>
+         <!-- Bootstrap Js CDN -->
+         <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+
+         <script type="text/javascript">
+             $body = $("body");
+
+             $(document).on({
+                 ajaxStart: function() { $body.addClass("loading");    },
+                  ajaxStop: function() { $body.removeClass("loading"); }
+             });
+         </script>
+    </body>
+</html>
