@@ -39,25 +39,82 @@ def getdicofdic(data, numofclu, numofbea, dim, first_algo, second_algo, names):
             ret[i]=KrNN(dic[i], 6)
     return ret,retn;
 
-def get_data_dimensionised_dic(data, numofclu, numofbea, dim, first_algo, second_algo, names, attributes, data_dimension):
+def find_bin_num(input_list,input_num):
+    ret = 0
+    for i in range(len(input_list)):
+        ret = i
+        if input_num > input_list[i]:
+            break
+    return ret
+
+def binpointsdic(data,names,attribute_num, number_of_bins):
+    mini = None
+    maxi = None
+    for i in range(len(data)):
+        if mini==None:
+            mini = data[i][attribute_num]
+        else:
+            mini = min(mini,data[i][attribute_num])
+
+        if maxi==None:
+            maxi = data[i][attribute_num]
+        else:
+            maxi = max(maxi,data[i][attribute_num])
+    print maxi,mini
+
+    range_per_bin = (maxi-mini)/number_of_bins
+    if (maxi-mini)%number_of_bins!=0:
+        range_per_bin += 1;
+    ranges_upper = []
+    tmp_range_upper = maxi
+    for i in range(number_of_bins):
+        tmp_range_upper -= range_per_bin
+        ranges_upper.append(tmp_range_upper)
+    print ranges_upper
+    ret = {}
+    retn = {}
+    for i in range(len(data)):
+        x = find_bin_num(ranges_upper,data[i][attribute_num])
+        if x not in ret:
+            ret[x] = [data[i]]
+            retn[x] = [names[i]]
+        else:
+            ret[x].append(data[i])
+            retn[x].append(names[i])
+    return ret,retn;
+
+def get_data_dimensionised_dic(data, numofclu, numofbea, dim, first_algo, second_algo, names, attributes, data_dimension,number_of_bins):
     """
     In case of data dimension
     This function returns a dictionary of dictionary storing each cluster append
     it's BEADS
     """
+
     if first_algo == "kmean":
         dic,na = kmean(data, numofclu, names,0)
     else:
         dic = KrNN(data, 6)
 
-    attribute_no = list.index()
+    try:
+        attribute_num = attributes.index(data_dimension)
+    except ValueError:
+        attribute_num = 0;
+
     ret = {}
     retn = {}
     for i in dic:
-        if second_algo == "kmean":
-            ret[i],retn[i] = kmean(dic[i], numofbea,na[i], 0)
-        else:
-            ret[i]=KrNN(dic[i], 6)
+        tmp_dic = {};
+        tmp_name = {};
+        binned_points, binned_points_name = binpointsdic(dic[i],na[i],attribute_num,number_of_bins);
+        curr_ind = 0;
+        for j in binned_points:
+            binned_cluster,binned_name = kmean(binned_points[j],numofbea,binned_points_name[j], 0);
+            for k in binned_cluster:
+                tmp_dic[curr_ind] = binned_cluster[k]
+                tmp_name[curr_ind] = binned_name[k]
+                curr_ind += 1
+        ret[i] = tmp_dic
+        retn[i] = tmp_name
     return ret,retn;
 
 
@@ -125,7 +182,7 @@ def load_dataset(file_path):
         for row in reader:
             if i==0:
                 attributes = row[:]
-                print attributes
+                # print attributes
                 i+=1
             else:
                 rw = row[1:]
@@ -139,7 +196,7 @@ def load_dataset(file_path):
 
 
 
-def main(no_of_cluster, no_of_beads, first_algo, second_algo, current_file_path, data_dimension):
+def main(no_of_cluster, no_of_beads, first_algo, second_algo, current_file_path, data_dimension,number_of_bins=0):
     global iris
     global shapes
 
@@ -151,7 +208,7 @@ def main(no_of_cluster, no_of_beads, first_algo, second_algo, current_file_path,
     if data_dimension == "no_data_dimension":
         dic, na = getdicofdic(iris, no_of_cluster, no_of_beads, dim, first_algo, second_algo,names)
     else:
-        dic, na = get_data_dimensionised_dic(iris, no_of_cluster, no_of_beads, dim, first_algo, second_algo, names, attributes, data_dimension)
+        dic, na = get_data_dimensionised_dic(iris, no_of_cluster, no_of_beads, dim, first_algo, second_algo, names, attributes, data_dimension, number_of_bins)
 
     shapes = []
     all_cluster_data = {}
@@ -163,11 +220,16 @@ def main(no_of_cluster, no_of_beads, first_algo, second_algo, current_file_path,
     return all_cluster_data, dim, attributes
 
 if __name__ == '__main__':
-    fln = "/IRIS.csv"
-    a=main(3,3,"kmean","kmean",fln)
-    print a
+    # fln = "/IRIS.csv"
+    # a,b,c,=main(3,3,"kmean","kmean",fln,"no_data_dimension")
+    # print a
     # print a[0]['points']
     # iris=datasets.load_iris()
     # names = [str(i) for i in range(150)]
     # dic,na = getdicofdic(iris.data,3,3,4,'kmean','kmean',names)
     # print na
+    data = [[1,2,3,4],[2,3,4,1],[3,2,4,2],[3,3,3,3],[1,1,1,1],[5,6,5,6]];
+    names = ['point1','point2','point3','point4','point5','point6']
+    attributes = ['at1','at2','at3','at4']
+    data_dimension = 'at3'
+    print get_data_dimensionised_dic(data, 1, 3,4,'kmean','kmean',names, attributes, data_dimension, 2)
