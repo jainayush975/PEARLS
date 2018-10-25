@@ -8,7 +8,6 @@ function update_camera(to_type) {
     CAMER_VIEW = to_type
     return ;
 }
-
 function handle_request(url, data, suc) {
 
     $.ajax({url: url,
@@ -17,6 +16,34 @@ function handle_request(url, data, suc) {
             suc(result);
         }});
     }
+
+
+function getFrom() {
+    document.getElementById('id01').style.display='block';
+
+    var suc = function(result) {
+
+        obj = document.getElementById('dd');
+        var i;
+
+        while(obj.options.length > 1) {
+            obj.options[1] = null;
+        }
+
+        for(i=0; i<result.length; i++) {
+            var opt = document.createElement("option");
+            opt.text = result[i];
+            opt.value = result[i];
+            obj.add(opt);
+        }
+        return ;
+    }
+    data = {}
+    var url = "http://127.0.0.1:8000/beads/getattributelist"
+
+    handle_request(url, data, suc);
+    return ;
+}
 
 function makeTable(result, n, m) {
     var tbl = document.createElement("table");
@@ -52,6 +79,7 @@ function makeTable(result, n, m) {
     tbl.appendChild(tblBody);
     return tbl;
 }
+
 function fillInfoBox(result) {
     // console.log(result)
     var n = result.length;
@@ -205,6 +233,7 @@ function makeClusterDB() {
     var no_of_beads = document.getElementById("number-of-beads").value;
     var calgo = document.getElementById("calg").value;
     var balgo = document.getElementById("balg").value;
+    var dd = document.getElementById("dd").value;
 
     var url = "http://127.0.0.1:8000/beads/makeclusters"
     var data = {
@@ -212,6 +241,7 @@ function makeClusterDB() {
         'no_of_beads' : no_of_beads,
         'first_algo' : calgo,
         'second_algo' : balgo,
+        'data_dimension' : dd,
     }
     var suc = function(result) {
         dimension = result["dimension"];

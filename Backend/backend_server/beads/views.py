@@ -4,6 +4,7 @@ from .Beads_Core import display
 from .Beads_Core.beadplacement import convert_to_2D
 from beads.models import PEARLS
 import json
+import csv
 from rest_framework.views import APIView
 from rest_framework.parsers import MultiPartParser, FormParser
 from rest_framework.response import Response
@@ -23,6 +24,21 @@ class FileView(APIView):
             return Response(file_serializer.data, status=status.HTTP_201_CREATED)
         else:
             return Response(file_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+def getAttributeList(request):
+
+    attributes = []
+    if current_file_path is not "":
+        with open(current_file_path[1:], 'rb') as fl:
+            reader = csv.reader(fl)
+            data = []
+            names = []
+            i = 0
+            for row in reader:
+                attributes = row[:]
+                break
+    return JsonResponse(attributes, safe=False)
+
 
 def searchVector(request):
 
@@ -61,7 +77,7 @@ def updateDB(request):
     no_of_beads = int(request.GET.get('no_of_beads'))
     first_algo = str(request.GET.get('first_algo'))
     second_algo = str(request.GET.get('second_algo'))
-    data_dimension = "no_data_dimension"
+    data_dimension = str(request.GET.get('data_dimension'))
 
     """
         Delete previous state of database

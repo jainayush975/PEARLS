@@ -54,7 +54,7 @@
                         </a></li>
                     </ul>
                     <ul class="list-unstyled components">
-                        <li><a onclick="document.getElementById('id01').style.display='block'">Get Form</a></li>
+                        <li><a onclick="getFrom()">Get Form</a></li>
                         <li><a onclick="document.getElementById('sfeature').style.display='block'">Search Feature</a></li>
                         <li> <a onclick="changeGrid()"> Change axis Style </a> </li>
                         <li><a onclick="spreadAlert()">Spread</a></li>
@@ -145,6 +145,12 @@
 
               <label for="nobeads"><b>Number Of Beads</b></label>
               <input type="number" placeholder="Number of Cluster" name="nobeads" id="number-of-beads" class="form_select" required>
+              <br>
+
+              <label for="dd"><b>Select Data Dimension</b></label>
+              <select name="dd" class="form_select" id="dd">
+                <option value="no_data_dimension">No Data Dimension</option>
+              </select>
               <br>
 
             </div>
