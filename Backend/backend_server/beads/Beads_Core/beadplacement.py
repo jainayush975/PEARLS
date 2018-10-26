@@ -108,7 +108,7 @@ def find_maximum_phi(pearl, DIM, pearl_centroid, cluster_centroid):
     return cos_phi
 
 
-def beadplacement(bead, dim, cluster_centroid):
+def beadplacement(bead, dim, cluster_centroid,flag,attribute_num=-1):
     v4 = 4.933
     bead_centroid = find_bead_centroid(bead, dim)
     cos_phi = find_maximum_phi(bead, dim, bead_centroid, cluster_centroid)
@@ -137,7 +137,10 @@ def beadplacement(bead, dim, cluster_centroid):
 
     obj['x'] = new_cent['x']
     obj['y'] = new_cent['y']
-    obj['z'] = new_cent['z']
+    if !flag:
+        obj['z'] = new_cent['z']
+    else:
+        obj['z'] = bead_centroid[attribute_num]
     obj['r'] = shape['r']
     obj['s'] = shape['s']
     return obj

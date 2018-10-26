@@ -97,14 +97,14 @@ def identify_shape(bead,dim):
     bestf = fD1
     vC = volumeConstant(P[p],dim)
     minVol = vC * (fD1[1][0]**dim)
-    print minVol
+    # print minVol
     p+=1
     while p!=4:
         fD2 = [P[p],farthestDis(bead,dim,P[p],clc)]
         cvC = volumeConstant(P[p],dim)
         cVol = cvC * (fD2[1][0]**dim)
         p+=1
-        print cVol
+        # print cVol
         if cVol < minVol:
             bestf = fD2
             minVol = cVol

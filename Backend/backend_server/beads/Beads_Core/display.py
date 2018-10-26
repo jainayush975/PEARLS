@@ -148,14 +148,14 @@ def processEachCluster(data,dim,clunum):
     plt.ylim([-5,5])
     plt.show()
 
-def dumpJsonFiles(data,names,dim,clunum):
+def dumpJsonFiles(data,names,dim,clunum,flag,attribute_num=-1):
     dicshapes = {}
     dicpoints = {}
     dic = data[clunum]
     cluster_centroid=find_cluster_centroid(dic, dim)
     m = 0
     for bead in dic:
-        obj = beadplacement(dic[bead], dim, cluster_centroid)
+        obj = beadplacement(dic[bead], dim, cluster_centroid,flag,attribute_num)
         obj['c'] = colors_lst[m]
         dicshapes[bead] = obj
         m+=1
@@ -204,17 +204,23 @@ def main(no_of_cluster, no_of_beads, first_algo, second_algo, current_file_path,
     dic = {}
 
     dim = len(iris[0])
-
+    try:
+        attribute_num = attributes.index(data_dimension)
+    except ValueError:
+        attribute_num = -1
+    flagdump = False
     if data_dimension == "no_data_dimension":
         dic, na = getdicofdic(iris, no_of_cluster, no_of_beads, dim, first_algo, second_algo,names)
+        flagdump = False
     else:
         dic, na = get_data_dimensionised_dic(iris, no_of_cluster, no_of_beads, dim, first_algo, second_algo, names, attributes, data_dimension, number_of_bins)
-
+        flagdump = True
     shapes = []
     all_cluster_data = {}
 
+
     for i in dic:
-        out = dumpJsonFiles(dic,na,dim,i)
+        out = dumpJsonFiles(dic,na,dim,i,flagdump,attribute_num)
         all_cluster_data[i] = out
 
     return all_cluster_data, dim, attributes
