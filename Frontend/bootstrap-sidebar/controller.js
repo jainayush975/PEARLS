@@ -8,6 +8,7 @@ function update_camera(to_type) {
     CAMER_VIEW = to_type
     return ;
 }
+
 function handle_request(url, data, suc) {
 
     $.ajax({url: url,
@@ -15,7 +16,7 @@ function handle_request(url, data, suc) {
         success: function(result){
             suc(result);
         }});
-    }
+}
 
 
 function getFrom() {
@@ -234,6 +235,7 @@ function makeClusterDB() {
     var calgo = document.getElementById("calg").value;
     var balgo = document.getElementById("balg").value;
     var dd = document.getElementById("dd").value;
+    var no_of_bins = document.getElementById("number-of-bins").value;
 
     var url = "http://127.0.0.1:8000/beads/makeclusters"
     var data = {
@@ -242,6 +244,7 @@ function makeClusterDB() {
         'first_algo' : calgo,
         'second_algo' : balgo,
         'data_dimension' : dd,
+        'no_of_bins' : no_of_bins,
     }
     var suc = function(result) {
         dimension = result["dimension"];

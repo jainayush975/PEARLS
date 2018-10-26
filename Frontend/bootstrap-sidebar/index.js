@@ -10,7 +10,6 @@ var attribute_list = [];
 var noofSec = Math.pow(2,6);
 var scrollFactor = 500.0;
 var mouseVec = new THREE.Vector2();
-var pearl_3d_obj_map = {};
 var current_cluster_id = null;
 var currPearlN = null;
 var zperiod = 1.0;
@@ -57,8 +56,9 @@ var mouse_down = function(event) {
     }
 
     if(intersects.length != 0) {
-      currPearlN = pearl_3d_obj_map[intersects[0].object.id];
-      getBead(pearl_3d_obj_map[intersects[0].object.id], current_cluster_id);
+        currPearlN = pearl_3d_obj_map[intersects[0].object.id];
+        console.log(currPearlN);
+        getBead(currPearlN, current_cluster_id);
     }
 
     return ;
@@ -112,6 +112,8 @@ function makeWireFrame(shapedic, pearl_number)
     //  });
     ret = new THREE.LineSegments( edges, new THREE.LineBasicMaterial({color: 0x000000}) );
     ret.position.set(10*shapedic['x'],10*shapedic['y'],10*shapedic['z']);
+    pearl_3d_obj_map[ret.id] = pearl_number;
+
     return ret
 }
 
@@ -265,18 +267,19 @@ function myFunction(pearls, cirgrid) {
 
                         for (var key in pearls['shapes']) {
                           var shape = pearls['shapes'][key];
-                          if(Math.abs(shape['z'])>zmax)
-                          {
+
+                          if(Math.abs(shape['z'])>zmax){
                               zmax = Math.abs(shape['z']);
                           }
+
                           var obj = makeShape(shape, parseInt(key));
                           var wireObj = makeWireFrame(shape, parseInt(key));
                           scene.add(obj)
                           if(wireObj!="nod")
                             scene.add(wireObj)
                         }
-                        zperiod = max(1.0,zmax/10.0);
-                        zperiod = Math.floor(zperiod);
+                        // zperiod = max(1.0,zmax/10.0);
+                        // zperiod = Math.floor(zperiod);
                         // var glabel = -580;
                         // var tempMesh = getLabel(font,glabel);
                         // // var zAxis = new THREE.Vector3(0,0,1);
@@ -285,31 +288,31 @@ function myFunction(pearls, cirgrid) {
                         // rotateAroundObjectAxis(tempMesh,yAxis,Math.PI/2.0);
                         // rotateAroundObjectAxis(tempMesh,zAxis,Math.PI/2.0);
                         // scene.add(tempMesh);
-
-                        for(var i=1;i<24;i++)
-                        {
-                            var glabel = i*zperiod;
-                            var tempMesh = getLabel(font,glabel);
-                            // var zAxis = new THREE.Vector3(0,0,1);
-                            var yAxis = new THREE.Vector3(0,1,0);
-                            var zAxis = new THREE.Vector3(0,0,1);
-                            rotateAroundObjectAxis(tempMesh,yAxis,Math.PI/2.0);
-                            rotateAroundObjectAxis(tempMesh,zAxis,Math.PI/2.0);
-                            scene.add(tempMesh);
-                        }
-                        for(var i=1;i<24;i++)
-                        {
-                            var glabel = -i*zperiod;
-                            var tempMesh = getLabel(font,glabel);
-                            // var zAxis = new THREE.Vector3(0,0,1);
-                            var yAxis = new THREE.Vector3(0,1,0);
-                            var zAxis = new THREE.Vector3(0,0,1);
-                            rotateAroundObjectAxis(tempMesh,yAxis,Math.PI/2.0);
-                            rotateAroundObjectAxis(tempMesh,zAxis,Math.PI/2.0);
-                            scene.add(tempMesh);
-                        }
-                        console.log(zmax);
-                        console.log(zperiod);
+                        //
+                        // for(var i=1;i<24;i++)
+                        // {
+                        //     var glabel = i*zperiod;
+                        //     var tempMesh = getLabel(font,glabel);
+                        //     // var zAxis = new THREE.Vector3(0,0,1);
+                        //     var yAxis = new THREE.Vector3(0,1,0);
+                        //     var zAxis = new THREE.Vector3(0,0,1);
+                        //     rotateAroundObjectAxis(tempMesh,yAxis,Math.PI/2.0);
+                        //     rotateAroundObjectAxis(tempMesh,zAxis,Math.PI/2.0);
+                        //     scene.add(tempMesh);
+                        // }
+                        // for(var i=1;i<24;i++)
+                        // {
+                        //     var glabel = -i*zperiod;
+                        //     var tempMesh = getLabel(font,glabel);
+                        //     // var zAxis = new THREE.Vector3(0,0,1);
+                        //     var yAxis = new THREE.Vector3(0,1,0);
+                        //     var zAxis = new THREE.Vector3(0,0,1);
+                        //     rotateAroundObjectAxis(tempMesh,yAxis,Math.PI/2.0);
+                        //     rotateAroundObjectAxis(tempMesh,zAxis,Math.PI/2.0);
+                        //     scene.add(tempMesh);
+                        // }
+                        // console.log(zmax);
+                        // console.log(zperiod);
                         document.getElementById('mycanvas').addEventListener("wheel", wheel_movement, false);
                         document.getElementById('mycanvas').addEventListener("mousedown", mouse_down, false);
                         // var Mytestshape ={'s':1,'r':1,'x':0,'y':0,'z':0,'c':'#00ff00'};

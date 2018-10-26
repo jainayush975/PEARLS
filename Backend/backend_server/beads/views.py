@@ -78,6 +78,7 @@ def updateDB(request):
     first_algo = str(request.GET.get('first_algo'))
     second_algo = str(request.GET.get('second_algo'))
     data_dimension = str(request.GET.get('data_dimension'))
+    no_of_bins = int(request.GET.get('no_of_bins'))
 
     """
         Delete previous state of database
@@ -88,7 +89,7 @@ def updateDB(request):
 
     global current_file_path
 
-    data, dimension, attributes = display.main(no_of_cluster, no_of_beads, first_algo, second_algo, current_file_path, data_dimension)
+    data, dimension, attributes = display.main(no_of_cluster, no_of_beads, first_algo, second_algo, current_file_path, data_dimension, no_of_bins)
     modified_data_points = {}
 
     for cluster in data:
@@ -113,22 +114,22 @@ def updateDB(request):
     with open('cluster_centroids.json','w') as fp2:
         json.dump(cluster_centroids, fp2)
 
-    # for cluster in data:
-    #     dt = {}
-    #     # print data[cluster]['pointName']
-    #     for bead in data[cluster]['acpoints']:
-    #         bd = []
-    #         i = 0
-    #         for points in data[cluster]['acpoints'][bead]:
-    #             arr = points.tolist()
-    #             arr.insert(0, data[cluster]['pointName'][bead][i])
-    #             bd.append(arr)
-    #             i+=1
-    #         dt[bead] = bd
-    #     modified_data_points[cluster] = dt
-    #
-    # with open('modified_data_points.json','w') as fp1:
-    #     json.dump(modified_data_points, fp1)
+    for cluster in data:
+        dt = {}
+        # print data[cluster]['pointName']
+        for bead in data[cluster]['acpoints']:
+            bd = []
+            i = 0
+            for points in data[cluster]['acpoints'][bead]:
+                arr = points.tolist()
+                arr.insert(0, data[cluster]['pointName'][bead][i])
+                bd.append(arr)
+                i+=1
+            dt[bead] = bd
+        modified_data_points[cluster] = dt
+
+    with open('modified_data_points.json', 'w') as fp1:
+        json.dump(modified_data_points, fp1)
 
     output = {
         'result' : 1,

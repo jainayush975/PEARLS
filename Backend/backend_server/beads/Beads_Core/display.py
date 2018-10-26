@@ -159,7 +159,10 @@ def dumpJsonFiles(data,names,dim,clunum,flag,attribute_num=-1):
         obj['c'] = colors_lst[m]
         dicshapes[bead] = obj
         m+=1
+
     dic1 = {
+        "pointName": names[clunum],
+        "acpoints" : dic,
         "shapes" : dicshapes,
         "cluster_centroid" : cluster_centroid
     }
@@ -196,7 +199,7 @@ def load_dataset(file_path):
 
 
 
-def main(no_of_cluster, no_of_beads, first_algo, second_algo, current_file_path, data_dimension,number_of_bins=0):
+def main(no_of_cluster, no_of_beads, first_algo, second_algo, current_file_path, data_dimension,number_of_bins):
     global iris
     global shapes
 

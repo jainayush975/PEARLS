@@ -137,7 +137,8 @@ def beadplacement(bead, dim, cluster_centroid,flag,attribute_num=-1):
 
     obj['x'] = new_cent['x']
     obj['y'] = new_cent['y']
-    if !flag:
+
+    if not flag:
         obj['z'] = new_cent['z']
     else:
         obj['z'] = bead_centroid[attribute_num]
