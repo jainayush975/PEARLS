@@ -96,7 +96,7 @@ def get_data_dimensionised_dic(data, numofclu, numofbea, dim, first_algo, second
         dic = KrNN(data, 6)
 
     try:
-        attribute_num = attributes.index(data_dimension)
+        attribute_num = attributes.index(data_dimension)-1
     except ValueError:
         attribute_num = 0;
 
@@ -208,7 +208,7 @@ def main(no_of_cluster, no_of_beads, first_algo, second_algo, current_file_path,
 
     dim = len(iris[0])
     try:
-        attribute_num = attributes.index(data_dimension)
+        attribute_num = attributes.index(data_dimension)-1
     except ValueError:
         attribute_num = -1
     flagdump = False

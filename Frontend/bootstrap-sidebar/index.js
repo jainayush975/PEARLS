@@ -297,7 +297,7 @@ function myFunction(pearls, cirgrid) {
                         for(var i=0;i<12;i++)
                         {
                             var spritey = makeTextSprite(''+i*zperiod, fontColor)
-                            spritey.position.set(scrollFactor-500.0,0,10*i*zperiod+8);
+                            spritey.position.set(0,0,10*i*zperiod+8);
                             scene.add(spritey);
                         }
                         console.log(zmax);
