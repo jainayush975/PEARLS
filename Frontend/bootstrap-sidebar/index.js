@@ -161,15 +161,7 @@ function makeShape(shapedic, pearl_number)
     return ret
 }
 
-function getLabel(font,label) {
-    var Label = new THREE.TextGeometry(label.toString(), {font: font, size: 20.0, height: 35, material: 0, bevelThickness: 1, extrudeMaterial: 1});  //TextGeometry(text, parameters)
-    var LabelMaterial = new THREE.MeshBasicMaterial({color: '#000000'});
-    var retMesh = new THREE.Mesh(Label, LabelMaterial);
-    retMesh.position.z = 10.0*label;
-    retMesh.position.x = 0.0;
-    retMesh.position.y = 0.0;
-    return retMesh;
-}
+
 
 function makeAxis(origin,terminus,size,color){
     var direction = new THREE.Vector3().subVectors(terminus, origin).normalize();
@@ -177,14 +169,39 @@ function makeAxis(origin,terminus,size,color){
     return arrow;
 }
 
-function makeText(font,text,tx,ty,tz,tcolor,size){
-    var axisLabel = new THREE.TextGeometry(text, {font: font, size: 0.1, height: 0.1, material: 0, bevelThickness: 1, extrudeMaterial: 1});  //TextGeometry(text, parameters)
-    var axisMaterial = new THREE.MeshBasicMaterial({color:tcolor});
-    var textMesh = new THREE.Mesh(axisLabel, axisMaterial);
-    textMesh.position.z = tz
-    textMesh.position.x = tx
-    textMesh.position.y = ty
-    return textMesh;
+function makeTextSprite(message, fontColor, materialColor) {
+    var fontface = "Georgia";
+    var fontsize = 24;
+    var borderThickness = 4;
+    var canvas = document.createElement('canvas');
+    var context = canvas.getContext('2d');
+    var backgroundColor = {
+        r: 255,
+        g: 255,
+        b: 255,
+        a: 0.0
+    };
+    context.font = "Bold " + fontsize + "px " + fontface;
+
+    // get size data (height depends only on font size)
+    var metrics = context.measureText(message);
+    var textWidth = metrics.width;
+    context.fillStyle = "rgba(" + fontColor.r + "," + fontColor.g + "," + fontColor.b + "," + fontColor.a + ")";
+    //context.fillStyle = "rgba(" + backgroundColor.r + "," + backgroundColor.g + "," + backgroundColor.b + "," + backgroundColor.a + ")";
+
+    context.fillText(message, borderThickness, fontsize + borderThickness);
+
+    // canvas contents will be used for a texture
+    var texture = new THREE.Texture(canvas)
+    texture.needsUpdate = true;
+
+    var spriteMaterial = new THREE.SpriteMaterial({
+        map: texture,
+        color: materialColor != undefined ? materialColor : 0xffffff
+    });
+    var sprite = new THREE.Sprite(spriteMaterial);
+    sprite.scale.set(100, 50, 1.0);
+    return sprite;
 }
 
 function myFunction(pearls, cirgrid) {
@@ -278,41 +295,21 @@ function myFunction(pearls, cirgrid) {
                           if(wireObj!="nod")
                             scene.add(wireObj)
                         }
-                        // zperiod = max(1.0,zmax/10.0);
-                        // zperiod = Math.floor(zperiod);
-                        // var glabel = -580;
-                        // var tempMesh = getLabel(font,glabel);
-                        // // var zAxis = new THREE.Vector3(0,0,1);
-                        // var yAxis = new THREE.Vector3(0,1,0);
-                        // var zAxis = new THREE.Vector3(0,0,1);
-                        // rotateAroundObjectAxis(tempMesh,yAxis,Math.PI/2.0);
-                        // rotateAroundObjectAxis(tempMesh,zAxis,Math.PI/2.0);
-                        // scene.add(tempMesh);
-                        //
-                        // for(var i=1;i<24;i++)
-                        // {
-                        //     var glabel = i*zperiod;
-                        //     var tempMesh = getLabel(font,glabel);
-                        //     // var zAxis = new THREE.Vector3(0,0,1);
-                        //     var yAxis = new THREE.Vector3(0,1,0);
-                        //     var zAxis = new THREE.Vector3(0,0,1);
-                        //     rotateAroundObjectAxis(tempMesh,yAxis,Math.PI/2.0);
-                        //     rotateAroundObjectAxis(tempMesh,zAxis,Math.PI/2.0);
-                        //     scene.add(tempMesh);
-                        // }
-                        // for(var i=1;i<24;i++)
-                        // {
-                        //     var glabel = -i*zperiod;
-                        //     var tempMesh = getLabel(font,glabel);
-                        //     // var zAxis = new THREE.Vector3(0,0,1);
-                        //     var yAxis = new THREE.Vector3(0,1,0);
-                        //     var zAxis = new THREE.Vector3(0,0,1);
-                        //     rotateAroundObjectAxis(tempMesh,yAxis,Math.PI/2.0);
-                        //     rotateAroundObjectAxis(tempMesh,zAxis,Math.PI/2.0);
-                        //     scene.add(tempMesh);
-                        // }
-                        // console.log(zmax);
-                        // console.log(zperiod);
+                        zperiod = max(1.0,zmax/10.0);
+                        zperiod = Math.floor(zperiod);
+                        var fontColor = {
+                            r: 0,
+                            g: 0,
+                            b: 0,
+                            a: 1.0
+                        };
+
+                        var spritey = makeTextSprite(''+0, fontColor)
+                        spritey.name = "meranaamchunchunchun"
+                        spritey.position.set(-3,-5,-30);
+                        scene.add(spritey);
+                        console.log(zmax);
+                        console.log(zperiod);
                         document.getElementById('mycanvas').addEventListener("wheel", wheel_movement, false);
                         document.getElementById('mycanvas').addEventListener("mousedown", mouse_down, false);
                         // var Mytestshape ={'s':1,'r':1,'x':0,'y':0,'z':0,'c':'#00ff00'};
