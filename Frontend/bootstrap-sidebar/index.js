@@ -282,6 +282,7 @@ function myFunction(pearls, cirgrid) {
                         }
                         zperiod = max(1.0,zmax/10.0);
                         zperiod = Math.floor(zperiod);
+                        zperiod *= 2;
                         console.log(zperiod);
                         var fontColor = {
                             r: 0,
@@ -293,10 +294,10 @@ function myFunction(pearls, cirgrid) {
                         // var spritey = makeTextSprite(''+0, fontColor)
                         // spritey.name = "meranaamchunchunchun"
                         // spritey.position.set(0,0,0);
-                        for(var i=0;i<24;i++)
+                        for(var i=0;i<12;i++)
                         {
                             var spritey = makeTextSprite(''+i*zperiod, fontColor)
-                            spritey.position.set(0,0,10*i*zperiod+8);
+                            spritey.position.set(scrollFactor-500.0,0,10*i*zperiod+8);
                             scene.add(spritey);
                         }
                         console.log(zmax);
@@ -319,8 +320,7 @@ function myFunction(pearls, cirgrid) {
                                 }
                                 else if(scene.children[i].type=="Sprite")
                                 {
-                                    scaleFactor = scrollFactor/500.0;
-                                    scene.children[i].scale = new THREE.Vector3(scaleFactor*100.0,scaleFactor*50.0,scaleFactor*1.0);
+
                                 }
                             }
 
