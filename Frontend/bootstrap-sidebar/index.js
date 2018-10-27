@@ -13,23 +13,7 @@ var mouseVec = new THREE.Vector2();
 var current_cluster_id = null;
 var currPearlN = null;
 var zperiod = 1.0;
-var rotObjectMatrix;
-function rotateAroundObjectAxis(object, axis, radians) {
-    rotObjectMatrix = new THREE.Matrix4();
-    rotObjectMatrix.makeRotationAxis(axis.normalize(), radians);
-
-    // old code for Three.JS pre r54:
-    // object.matrix.multiplySelf(rotObjectMatrix);      // post-multiply
-    // new code for Three.JS r55+:
-    object.matrix.multiply(rotObjectMatrix);
-
-    // old code for Three.js pre r49:
-    // object.rotation.getRotationFromMatrix(object.matrix, object.scale);
-    // old code for Three.js r50-r58:
-    // object.rotation.setEulerFromRotationMatrix(object.matrix);
-    // new code for Three.js r59+:
-    object.rotation.setFromRotationMatrix(object.matrix);
-}
+var scaleFactor = 1.0;
 
 var mouse_down = function(event) {
 
@@ -172,7 +156,7 @@ function makeAxis(origin,terminus,size,color){
 function makeTextSprite(message, fontColor, materialColor) {
     var fontface = "Georgia";
     var fontsize = 24;
-    var borderThickness = 4;
+    var borderThickness = 0;
     var canvas = document.createElement('canvas');
     var context = canvas.getContext('2d');
     var backgroundColor = {
@@ -201,6 +185,7 @@ function makeTextSprite(message, fontColor, materialColor) {
     });
     var sprite = new THREE.Sprite(spriteMaterial);
     sprite.scale.set(100, 50, 1.0);
+    sprite.center.set(0,1);
     return sprite;
 }
 
@@ -297,6 +282,7 @@ function myFunction(pearls, cirgrid) {
                         }
                         zperiod = max(1.0,zmax/10.0);
                         zperiod = Math.floor(zperiod);
+                        console.log(zperiod);
                         var fontColor = {
                             r: 0,
                             g: 0,
@@ -304,10 +290,15 @@ function myFunction(pearls, cirgrid) {
                             a: 1.0
                         };
 
-                        var spritey = makeTextSprite(''+0, fontColor)
-                        spritey.name = "meranaamchunchunchun"
-                        spritey.position.set(-3,-5,-30);
-                        scene.add(spritey);
+                        // var spritey = makeTextSprite(''+0, fontColor)
+                        // spritey.name = "meranaamchunchunchun"
+                        // spritey.position.set(0,0,0);
+                        for(var i=0;i<24;i++)
+                        {
+                            var spritey = makeTextSprite(''+i*zperiod, fontColor)
+                            spritey.position.set(0,0,10*i*zperiod);
+                            scene.add(spritey);
+                        }
                         console.log(zmax);
                         console.log(zperiod);
                         document.getElementById('mycanvas').addEventListener("wheel", wheel_movement, false);
@@ -325,6 +316,11 @@ function myFunction(pearls, cirgrid) {
                                 }
                                 else if (scene.children[i].type=="Mesh") {
                                     scene.children[i].scale = new THREE.Vector3(scrollFactor/500.0,scrollFactor/500.0,scrollFactor/500.0);
+                                }
+                                else if(scene.children[i].type=="Sprite")
+                                {
+                                    scaleFactor = scrollFactor/500.0;
+                                    scene.children[i].scale = new THREE.Vector3(scaleFactor*100.0,scaleFactor*50.0,scaleFactor*1.0);
                                 }
                             }
 
