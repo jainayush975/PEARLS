@@ -265,6 +265,7 @@ function myFunction(pearls, cirgrid) {
                         requestAnimationFrame(render);
 
                         var zmax = -1.0;
+                        scrollFactor = 500.0;
                         // Drawing objects
 
                         for (var key in pearls['shapes']) {
@@ -298,6 +299,8 @@ function myFunction(pearls, cirgrid) {
                         {
                             var spritey = makeTextSprite(''+i*zperiod, fontColor)
                             spritey.position.set(0,0,10*i*zperiod+8);
+                            spritey.name = i;
+                            spritey.scale.set(200.0*scrollFactor/500.0,100.0*scrollFactor/500.0,2.0*scrollFactor/500.0);
                             scene.add(spritey);
                         }
                         console.log(zmax);
@@ -320,7 +323,9 @@ function myFunction(pearls, cirgrid) {
                                 }
                                 else if(scene.children[i].type=="Sprite")
                                 {
-
+                                    scene.children[i].scale.set(200.0*scrollFactor/500.0,100.0*scrollFactor/500.0,2.0*scrollFactor/500.0);
+                                    var tmpi = scene.children[i].name;
+                                    scene.children[i].position.set(0,0,10*tmpi*zperiod+8-(8*(500.0-scrollFactor)/500.0));
                                 }
                             }
 
