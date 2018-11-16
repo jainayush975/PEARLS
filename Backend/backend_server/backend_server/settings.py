@@ -54,7 +54,7 @@ MIDDLEWARE_CLASSES = [
     'django.middleware.security.SecurityMiddleware',
 ]
 CORS_ORIGIN_ALLOW_ALL = True
-CSRF_COOKIE_SECURE = True
+CSRF_COOKIE_SECURE = False
 ROOT_URLCONF = 'backend_server.urls'
 
 TEMPLATES = [

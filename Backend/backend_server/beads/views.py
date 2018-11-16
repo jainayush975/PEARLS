@@ -4,14 +4,18 @@ from .Beads_Core import display
 from .Beads_Core.beadplacement import convert_to_2D
 from beads.models import PEARLS
 import json
-import csv
+import csv, os
+import pandas
 from rest_framework.views import APIView
 from rest_framework.parsers import MultiPartParser, FormParser
 from rest_framework.response import Response
 from rest_framework import status
 from .serializers import FileSerializer
+from django.views.decorators.csrf import csrf_exempt
+
 
 current_file_path = ""
+current_data_path = ""
 
 class FileView(APIView):
     parser_classes = (MultiPartParser, FormParser)
@@ -19,13 +23,18 @@ class FileView(APIView):
         file_serializer = FileSerializer(data=request.data)
         if file_serializer.is_valid():
             file_serializer.save()
-            global current_file_path
+            global current_file_path, current_data_path
             current_file_path = str(file_serializer.data['file'])
+            current_data_path = current_file_path + "_data.csv"
+
+            data = pandas.read_csv(current_file_path[1:]);
+            data.to_csv(current_data_path[1:], encoding='utf-8', index=False)
+
             return Response(file_serializer.data, status=status.HTTP_201_CREATED)
         else:
             return Response(file_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-def getAttributeList(request):
+def getAllAttributeList(request):
 
     attributes = []
     if current_file_path is not "":
@@ -39,27 +48,30 @@ def getAttributeList(request):
                 break
     return JsonResponse(attributes, safe=False)
 
+def getAttributeList(request):
 
-def searchVector(request):
+    attributes = []
+    if current_data_path is not "":
+        with open(current_data_path[1:], 'rb') as fl:
+            reader = csv.reader(fl)
+            data = []
+            names = []
+            i = 0
+            for row in reader:
+                attributes = row[:]
+                break
+    return JsonResponse(attributes, safe=False)
 
-    vec = str(request.GET.get('vector'))
-    cid = int(request.GET.get('current_cluster'))
-    dim = int(request.GET.get('dimension'))
+@csrf_exempt
+def filterAttributes(request):
+    attributes_to_keep = request.POST.getlist('attributes[]')
 
-    with open('cluster_centroids.json') as json_data:
-        data = json.load(json_data)
+    data = pandas.read_csv(current_file_path[1:]);
+    data = data[attributes_to_keep]
+    # print data.head()
+    data.to_csv(current_data_path[1:], encoding='utf-8', index=False)
 
-    cluster_centroid = data[str(cid)]
-
-    vec = vec.split(',')
-    vec = [float(x) for x in vec]
-
-    obj = convert_to_2D(vec, cluster_centroid, dim, 2)
-    obj['r'] = 0.05
-    obj['s'] = 2
-    obj['c'] = '#000000'
-
-    return JsonResponse(obj, safe=False)
+    return JsonResponse({'result': True}, safe=False)
 
 def getBead(request):
 
@@ -87,9 +99,9 @@ def updateDB(request):
     PEARLS.objects.all().delete();
     # Points.objects.all().delete();
 
-    global current_file_path
+    global current_data_path
 
-    data, dimension, attributes = display.main(no_of_cluster, no_of_beads, first_algo, second_algo, current_file_path, data_dimension, no_of_bins)
+    data, dimension, attributes = display.main(no_of_cluster, no_of_beads, first_algo, second_algo, current_data_path, data_dimension, no_of_bins)
     modified_data_points = {}
 
     for cluster in data:
@@ -139,7 +151,6 @@ def updateDB(request):
     }
     return JsonResponse(output, safe=False)
 
-
 def getCluster(request):
 
     clusterno = int(request.GET.get('cluster'))
@@ -173,6 +184,27 @@ def getCluster(request):
     }
     # 'points' : all_points,
     return JsonResponse(out, safe=False)
+
+def searchVector(request):
+
+    vec = str(request.GET.get('vector'))
+    cid = int(request.GET.get('current_cluster'))
+    dim = int(request.GET.get('dimension'))
+
+    with open('cluster_centroids.json') as json_data:
+        data = json.load(json_data)
+
+    cluster_centroid = data[str(cid)]
+
+    vec = vec.split(',')
+    vec = [float(x) for x in vec]
+
+    obj = convert_to_2D(vec, cluster_centroid, dim, 2)
+    obj['r'] = 0.05
+    obj['s'] = 2
+    obj['c'] = '#000000'
+
+    return JsonResponse(obj, safe=False)
 
 def index(request):
 

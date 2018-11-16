@@ -55,11 +55,12 @@
                     </ul>
                     <ul class="list-unstyled components">
                         <li><a onclick="getFrom()">Get Form</a></li>
-                        <li><a onclick="document.getElementById('sfeature').style.display='block'">Search Feature</a></li>
-                        <li> <a onclick="changeGrid()"> Change axis Style </a> </li>
+                        <li><a onclick="attFilterForm()">Attribute Filtering</a></li>
+                        <!-- <li><a onclick="document.getElementById('sfeature').style.display='block'">Search Feature</a></li>
+                        <li><a onclick="changeGrid()"> Change axis Style </a> </li>
                         <li><a onclick="spreadAlert()">Spread</a></li>
                         <li><input id="slider" type="range" min="10" max="100" step="5" oninput="sliderChange(this.value)"></li>
-                        <li><a onclick="undo()">Undo</a></li>
+                        <li><a onclick="undo()">Undo</a></li> -->
                     </ul>
                     <ul class="list-unstyled components" id="cluster-list">
                     </ul>
@@ -186,6 +187,25 @@
           </form>
         </div>
 
+        <div id="attfilter" class="modal" class="form_modal">
+
+          <form class="modal-content animate" onsubmit="return filter_attributes()">
+              <div class="imgcontainer">
+                <span onclick="document.getElementById('attfilter').style.display='none'" class="close" title="Close Modal">&times;</span>
+                <!-- <img src="img_avatar2.png" alt="Avatar" class="avatar"> -->
+              </div>
+
+            <div class="container" id="attfilter_container">
+
+            </div>
+
+            <div class="container" style="background-color:#f1f1f1">
+              <button type="button" onclick="document.getElementById('attfilter').style.display='none'" class="cancelbtn">Cancel</button>
+              <span class="psw"><button type="submit">Submit</button></span>
+            </div>
+          </form>
+        </div>
+
         <div id="info_modal" class="modal">
             <div class="imgcontainer">
               <span onclick="document.getElementById('info_modal').style.display='none'" class="close" title="Close Modal">&times;</span>
@@ -197,18 +217,19 @@
         </div>
 
         <script>
-            document.getElementById('slider').value = 10;
+            // document.getElementById('slider').value = 10;
             // Get the modal
             var modal = document.getElementById('id01');
-            var modal1 = document.getElementById('sfeature');
-            var modal2 = document.getElementById('info_modal');
+            var modal1 = document.getElementById('attfilter');
+            // var modal1 = document.getElementById('sfeature');
+            // var modal2 = document.getElementById('info_modal');
 
             // When the user clicks anywhere outside of the modal, close it
             window.onclick = function(event) {
                 if (event.target == modal) {
                     modal.style.display = "none";
                     modal1.style.display = "none";
-                    modal2.style.display = "none";
+                    // modal2.style.display = "none";
                 }
             }
         </script>

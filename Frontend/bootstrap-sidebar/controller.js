@@ -9,15 +9,78 @@ function update_camera(to_type) {
     return ;
 }
 
-function handle_request(url, data, suc) {
+function handle_request(url, data, suc, type="GET") {
 
-    $.ajax({url: url,
+    $.ajax({
+        type: type,
+        url: url,
         data: data,
         success: function(result){
             suc(result);
-        }});
+        }
+    });
 }
 
+function attFilterForm() {
+    document.getElementById('attfilter').style.display='block';
+
+    var suc = function(result) {
+        container = document.getElementById('attfilter_container');
+
+        while(container.firstChild) {
+            container.removeChild(container.firstChild);
+        }
+
+        for(i=0; i<result.length; i++) {
+            var checkbox = document.createElement('input');
+            checkbox.type = "checkbox";
+            checkbox.name = result[i];
+            checkbox.value = result[i];
+            checkbox.id = result[i];
+
+            var label = document.createElement('label')
+            label.htmlFor = result[i];
+            label.appendChild(document.createTextNode(result[i]));
+
+            container.appendChild(checkbox);
+            container.appendChild(label);
+        }
+        return ;
+    };
+
+    data = {}
+    var url = "http://127.0.0.1:8000/beads/getallattributelist"
+
+    handle_request(url, data, suc);
+    return ;
+}
+
+function filter_attributes() {
+
+    container = document.getElementById('attfilter_container');
+    checked = [];
+
+    checked.push(container.childNodes[0].name);
+    for(i=1; i<container.childElementCount; i++) {
+        if(container.childNodes[i].type == 'checkbox' && container.childNodes[i].checked) {
+            checked.push(container.childNodes[i].name);
+        }
+    }
+
+    var suc = function (result) {
+        window.alert("The attributes are filtered in backend please recluster !\n Happy Data Mining :)")
+    }
+
+    console.log(checked);
+    data = {
+        'attributes[]' : checked,
+    }
+    console.log(data['attributes']);
+
+    var url = "http://127.0.0.1:8000/beads/filterattributes"
+    handle_request(url, data, suc, "POST");
+    return ;
+}
 
 function getFrom() {
     document.getElementById('id01').style.display='block';
@@ -116,81 +179,6 @@ function fillInfoBox(result) {
     tbl1.style.backgroundColor = "#ffffff";
     tbl1.style.color = "#000000";
     return false;
-}
-
-function getMean(result){
-
-    var n = result.length;
-    var m = null;
-    if(n>0)
-        m = result[0].length;
-    var ret = [];
-    for(var i=0;i<m;i++) {
-        ret.push(0.0);
-    }
-    for(var i=0;i<n;i++){
-        for(var j=0;j<m;j++){
-            ret[j] += result[i][j];
-        }
-    }
-    for(var i=0;i<m;i++){
-        ret[i]/=n;
-    }
-    return ret;
-}
-
-function getMax(result) {
-
-    var n = result.length;
-    var m = null;
-    var ret=[];
-    if(n>0){
-        m = result[0].length;
-    }
-    for(var i=0;i<m;i++){
-        ret.push(result[0][i]);
-    }
-    for(var i=1;i<n;i++){
-        for(var j=0;j<m;j++){
-            ret[j] = max(ret[j],result[i][j]);
-        }
-    }
-    return ret;
-}
-
-function getMin(result){
-    var n = result.length;
-    var m = null;
-    var ret=[];
-    if(n>0){
-        m = result[0].length;
-    }
-    for(var i=0;i<m;i++){
-        ret.push(result[0][i]);
-    }
-    for(var i=1;i<n;i++){
-        for(var j=0;j<m;j++)
-        {
-            ret[j] = min(ret[j],result[i][j]);
-        }
-    }
-    return ret;
-}
-
-function max(a,b){
-    if(a>b)
-        return(a);
-    else {
-        return(b);
-    }
-}
-
-function min(a,b){
-    if(a<b)
-        return(a);
-    else {
-        return(b);
-    }
 }
 
 function addClusterList(result) {
@@ -313,6 +301,81 @@ function spreadAlert(){
 function changeGrid(){
     gridType = !gridType;
     getCluster(current_cluster_id);
+}
+
+function getMean(result){
+
+    var n = result.length;
+    var m = null;
+    if(n>0)
+        m = result[0].length;
+    var ret = [];
+    for(var i=0;i<m;i++) {
+        ret.push(0.0);
+    }
+    for(var i=0;i<n;i++){
+        for(var j=0;j<m;j++){
+            ret[j] += result[i][j];
+        }
+    }
+    for(var i=0;i<m;i++){
+        ret[i]/=n;
+    }
+    return ret;
+}
+
+function getMax(result) {
+
+    var n = result.length;
+    var m = null;
+    var ret=[];
+    if(n>0){
+        m = result[0].length;
+    }
+    for(var i=0;i<m;i++){
+        ret.push(result[0][i]);
+    }
+    for(var i=1;i<n;i++){
+        for(var j=0;j<m;j++){
+            ret[j] = max(ret[j],result[i][j]);
+        }
+    }
+    return ret;
+}
+
+function getMin(result){
+    var n = result.length;
+    var m = null;
+    var ret=[];
+    if(n>0){
+        m = result[0].length;
+    }
+    for(var i=0;i<m;i++){
+        ret.push(result[0][i]);
+    }
+    for(var i=1;i<n;i++){
+        for(var j=0;j<m;j++)
+        {
+            ret[j] = min(ret[j],result[i][j]);
+        }
+    }
+    return ret;
+}
+
+function max(a,b){
+    if(a>b)
+        return(a);
+    else {
+        return(b);
+    }
+}
+
+function min(a,b){
+    if(a<b)
+        return(a);
+    else {
+        return(b);
+    }
 }
 
 $('body').on('contextmenu', '#mycanvas', function(e){ return false; });

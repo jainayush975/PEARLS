@@ -10,5 +10,7 @@ urlpatterns = [
     url('getcluster', views.getCluster, name='getcluster'),
     url('upload', views.FileView.as_view(), name='file-upload'),
     url('searchvector', views.searchVector, name='searchvector'),
+    url('getallattributelist', views.getAllAttributeList, name='getallattributelist'),
+    url('filterattributes', views.filterAttributes, name='filterattributes'),
     url('getattributelist', views.getAttributeList, name='getattributelist')
 ]
