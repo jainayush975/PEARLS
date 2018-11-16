@@ -8,6 +8,11 @@
     height:50px;
 }
 
+.basicinfo {
+    overflow-y: auto;
+    overflow-x: auto;
+}
+
 body {
     font-family: 'Poppins', sans-serif;
     background: #fafafa;

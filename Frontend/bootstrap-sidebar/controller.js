@@ -2,6 +2,9 @@ var dimension = null;
 acRfac = 1.0;
 gridType = false;
 var CAMER_VIEW = "PX";
+var currently_loaded = null;
+var currently_selected = null;
+var current_actual_color;
 
 function update_camera(to_type) {
     console.log("Changing view");
@@ -153,9 +156,15 @@ function fillInfoBox(result) {
     }
     var element = document.getElementById("infoBox");
     var element1 = document.getElementById("infoBox1");
+    var element3 = document.getElementById("basicinfo");
     var Mean=getMean(result);
     var Maxi=getMax(result);
     var Mini=getMin(result);
+
+    basicinfo_result = [Mean,Maxi,Mini];
+    var tbb = makeTable(basicinfo_result,3,m);
+    element3.innerHTML = "";
+    element3.appendChild(tbb);
 
     var text = "<button type=\"button\" onclick=\"document.getElementById('info_modal').style.display='block'\">Expand</button>"
     var text1 = "<ul class=\"list-unstyled components\">\n<li><a style=\"padding: 10px;font-size: 2em;display: block;\"><b> PEARL Number : " + currPearlN.toString() + "</b></a></li>\n<li><a style=\"padding: 10px;font-size: 1.2em;display: block;\"> Total Number Points : " + n.toString() + "</a></li></ul>";
@@ -178,6 +187,11 @@ function fillInfoBox(result) {
     tbl1.style.width = "90%";
     tbl1.style.backgroundColor = "#ffffff";
     tbl1.style.color = "#000000";
+    tbb.setAttribute("border", "2");
+    tbb.style.margin = "auto";
+    tbb.style.width = "90%";
+    tbb.style.backgroundColor = "#ffffff";
+    tbb.style.color = "#000000";
     return false;
 }
 
@@ -247,19 +261,49 @@ function makeClusterDB() {
     return false;
 }
 
-function getBead(bead_no, cluster_no) {
+function getBead(bead_no, cluster_no,load_or_select) {
 
-    var url = "http://127.0.0.1:8000/beads/getbead";
-    var data = {
-        cluster_no : cluster_no,
-        bead_no : bead_no,
-    }
-    var suc = function(result) {
-        return fillInfoBox(result);
-    }
+    var tmpKeyvs = {"bead_no":bead_no,"cluster_no":cluster_no};
+    if(load_or_select==0)
+    {
+        // console.log("Jai badhra kali")
+        // console.log(tmpKeyvs);
+        // console.log(currently_loaded);
+        // console.log("Jai badhra kali")
+        if(currently_loaded==null)
+        {
+            currently_loaded = tmpKeyvs;
+            var url = "http://127.0.0.1:8000/beads/getbead";
+            var data = {
+                cluster_no : cluster_no,
+                bead_no : bead_no,
+            }
+            var suc = function(result) {
+                return fillInfoBox(result);
+            }
 
-    handle_request(url, data, suc);
-    return false;
+            handle_request(url, data, suc);
+            return false;
+        }
+        else if(tmpKeyvs["bead_no"]!=currently_loaded["bead_no"] || tmpKeyvs["cluster_no"]!=currently_loaded["cluster_no"])
+        {
+            currently_loaded = tmpKeyvs;
+            var url = "http://127.0.0.1:8000/beads/getbead";
+            var data = {
+                cluster_no : cluster_no,
+                bead_no : bead_no,
+            }
+            var suc = function(result) {
+                return fillInfoBox(result);
+            }
+
+            handle_request(url, data, suc);
+            return false;
+        }
+    }
+    else {
+        currently_selected = tmpKeyvs;
+    }
 }
 
 function getCluster(i) {
@@ -271,7 +315,7 @@ function getCluster(i) {
         cancelAnimationFrame( animation_id );
         document.body.removeEventListener("mousedown", mouse_down);
         // document.body.removeEventListener("mouseup", mouse_up);
-        // document.body.removeEventListener("mousemove", mouse_move);
+        document.body.removeEventListener("mousemove", mouse_move);
         document.body.removeEventListener("wheel", wheel_movement);
 
         var camera=null;
@@ -309,16 +353,16 @@ function getMean(result){
     var m = null;
     if(n>0)
         m = result[0].length;
-    var ret = [];
-    for(var i=0;i<m;i++) {
+    var ret = ["Mean"];
+    for(var i=1;i<m;i++) {
         ret.push(0.0);
     }
     for(var i=0;i<n;i++){
-        for(var j=0;j<m;j++){
+        for(var j=1;j<m;j++){
             ret[j] += result[i][j];
         }
     }
-    for(var i=0;i<m;i++){
+    for(var i=1;i<m;i++){
         ret[i]/=n;
     }
     return ret;
@@ -328,15 +372,15 @@ function getMax(result) {
 
     var n = result.length;
     var m = null;
-    var ret=[];
+    var ret=["Max"];
     if(n>0){
         m = result[0].length;
     }
-    for(var i=0;i<m;i++){
+    for(var i=1;i<m;i++){
         ret.push(result[0][i]);
     }
     for(var i=1;i<n;i++){
-        for(var j=0;j<m;j++){
+        for(var j=1;j<m;j++){
             ret[j] = max(ret[j],result[i][j]);
         }
     }
@@ -346,15 +390,15 @@ function getMax(result) {
 function getMin(result){
     var n = result.length;
     var m = null;
-    var ret=[];
+    var ret=["Min"];
     if(n>0){
         m = result[0].length;
     }
-    for(var i=0;i<m;i++){
+    for(var i=1;i<m;i++){
         ret.push(result[0][i]);
     }
     for(var i=1;i<n;i++){
-        for(var j=0;j<m;j++)
+        for(var j=1;j<m;j++)
         {
             ret[j] = min(ret[j],result[i][j]);
         }

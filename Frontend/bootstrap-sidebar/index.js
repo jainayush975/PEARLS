@@ -6,6 +6,7 @@ var scene = null;
 var screenW = 0.75*window.innerWidth;
 var screenH = 0.75*window.innerHeight; /*SCREEN*/
 var pearl_3d_obj_map = {};
+var reverse_pearl_3d_obj_map = {};
 var attribute_list = [];
 var noofSec = Math.pow(2,6);
 var scrollFactor = 500.0;
@@ -35,14 +36,76 @@ var mouse_down = function(event) {
     raycaster.setFromCamera(mouseVec, camera);
     var intersects  = raycaster.intersectObjects(scene.children);
 
-    for(var i = 0; i<intersects.length; i++) {
-        intersects[i].object.material.color.set(0x000000);
-    }
+    // for(var i = 0; i<intersects.length; i++) {
+    //     intersects[i].object.material.color.set(0x000000);
+    // }
+    console.log(intersects);
+    // intersects[0].object.material.color.set(0x000000);
 
     if(intersects.length != 0) {
         currPearlN = pearl_3d_obj_map[intersects[0].object.id];
+        console.log("cool");
+        console.log(currently_selected);
+        console.log(current_actual_color);
+        if(currently_selected!=null)
+        {
+            if(currPearlN!=currently_selected["bead_no"] || current_cluster_id!=currently_selected["cluster_no"])
+            {
+                console.log("boom");
+                var obj = scene.getObjectById(reverse_pearl_3d_obj_map[currently_selected["bead_no"]])
+                obj.material.color.set(current_actual_color);
+            }
+            for(i=0;i<intersects.length;i++)
+            {
+                if(intersects[i].object.material.color['r']!=0 || intersects[i].object.material.color['g']!=0 || intersects[i].object.material.color['b']!=0)
+                {
+                    current_actual_color = intersects[i].object.material.color;
+                    break;
+                }
+            }
+                intersects[0].object.material.color.set(0x000000);
+        }
+        else {
+            current_actual_color = intersects[0].object.material.color;
+            intersects[0].object.material.color.set(0x000000);
+        }
         console.log(currPearlN);
-        getBead(currPearlN, current_cluster_id);
+        getBead(currPearlN, current_cluster_id,1);
+    }
+
+    return ;
+}
+var mouse_move = function(event) {
+
+    event.preventDefault();
+
+    var canvas = document.getElementById('mycanvas');
+    var rect = canvas.getBoundingClientRect();
+
+    var mX = event.clientX - rect.left;
+    var mY = event.clientY - rect.top;
+
+    var chX,chY;
+    chX = 2 * (mX/screenW) - 1;
+    chY = 1 - 2 * (mY/screenH);
+    console.log(chX, chY);
+    mouseVec.x = chX;
+    mouseVec.y = chY;
+    var raycaster = new THREE.Raycaster();
+    raycaster.setFromCamera(mouseVec, camera);
+    var intersects  = raycaster.intersectObjects(scene.children);
+
+    // for(var i = 0; i<intersects.length; i++) {
+    //     intersects[i].object.material.color.set(0x000000);
+    // }
+
+    if(intersects.length != 0) {
+        if(intersects[0].object.type=="Mesh")
+        {
+            currPearlN = pearl_3d_obj_map[intersects[0].object.id];
+            console.log(currPearlN);
+            getBead(currPearlN, current_cluster_id,0);
+        }
     }
 
     return ;
@@ -60,6 +123,10 @@ var wheel_movement = function(event) {
             scrollFactor = 1.0;
     }
     // changeScrollFac = event.deltaY;
+}
+
+var pan = function(event){
+    console.log("oh yeah")
 }
 
 function makeWireFrame(shapedic, pearl_number)
@@ -97,7 +164,7 @@ function makeWireFrame(shapedic, pearl_number)
     ret = new THREE.LineSegments( edges, new THREE.LineBasicMaterial({color: 0x000000}) );
     ret.position.set(10*shapedic['x'],10*shapedic['y'],10*shapedic['z']);
     pearl_3d_obj_map[ret.id] = pearl_number;
-
+    reverse_pearl_3d_obj_map[pearl_number] = ret.id;
     return ret
 }
 
@@ -141,7 +208,7 @@ function makeShape(shapedic, pearl_number)
     ret.position.set(10*shapedic['x'],10*shapedic['y'],10*shapedic['z']);
 
     pearl_3d_obj_map[ret.id] = pearl_number;
-
+    reverse_pearl_3d_obj_map[pearl_number]=ret.id;
     return ret
 }
 
@@ -152,6 +219,7 @@ function makeAxis(origin,terminus,size,color){
     var arrow = new THREE.ArrowHelper(direction, origin,size,color);
     return arrow;
 }
+
 
 function makeTextSprite(message, fontColor, materialColor) {
     var fontface = "Georgia";
@@ -307,6 +375,8 @@ function myFunction(pearls, cirgrid) {
                         console.log(zperiod);
                         document.getElementById('mycanvas').addEventListener("wheel", wheel_movement, false);
                         document.getElementById('mycanvas').addEventListener("mousedown", mouse_down, false);
+                        document.getElementById('mycanvas').addEventListener("mousemove",mouse_move,false);
+                        // document.addEventListener("keydown",pan ,false);
                         // var Mytestshape ={'s':1,'r':1,'x':0,'y':0,'z':0,'c':'#00ff00'};
                         // var obj = makeShape(Mytestshape, 1);
                         // scene.add(obj);
