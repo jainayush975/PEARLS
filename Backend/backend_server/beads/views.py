@@ -27,8 +27,9 @@ class FileView(APIView):
             current_file_path = str(file_serializer.data['file'])
             current_data_path = current_file_path + "_data.csv"
 
-            data = pandas.read_csv(current_file_path[1:]);
-            data.to_csv(current_data_path[1:], encoding='utf-8', index=False)
+            # data = pandas.read_csv(current_file_path[1:]);
+            # data.to_csv(current_data_path[1:], encoding='utf-8', index=False)
+            resp = restoreAll(None)
 
             return Response(file_serializer.data, status=status.HTTP_201_CREATED)
         else:
@@ -61,6 +62,32 @@ def getAttributeList(request):
                 attributes = row[:]
                 break
     return JsonResponse(attributes, safe=False)
+
+def restoreAll(request):
+    data = pandas.read_csv(current_file_path[1:]);
+    data.to_csv(current_data_path[1:], encoding='utf-8', index=False)
+    return JsonResponse({'result': True}, safe=False)
+
+def deletePearl(request):
+    cluster_no = int(request.GET.get('cluster_no'))
+    pearl_no = int(request.GET.get('pearl_no'))
+
+    with open('modified_data_points.json', 'r') as json_data:
+        data = json.load(json_data)
+
+    pearl_to_delete = data[str(cluster_no)][str(pearl_no)]
+    data = pandas.read_csv(current_data_path[1:])
+    attribute = data.columns.values.tolist()[0];
+
+    for point in pearl_to_delete:
+        val = point[0]
+        data = data.drop(data[data[attribute]==val].index)
+
+    data.to_csv(current_data_path[1:], encoding='utf-8', index=False)
+
+    return JsonResponse({'result': True}, safe=False)
+
+
 
 @csrf_exempt
 def filterAttributes(request):

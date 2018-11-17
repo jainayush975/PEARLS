@@ -54,10 +54,31 @@
                         </a></li>
                     </ul>
                     <ul class="list-unstyled components">
-                        <li><a onclick="getFrom()">Get Form</a></li>
+                        <li><a onclick="getFrom()">Cluster/Recluster</a></li>
                         <li><a onclick="attFilterForm()">Attribute Filtering</a></li>
+                        <li><a onclick="deletePearl()">Delete Current PEARL</a> </li>
+                        <li><a onclick="restorePearl()">Restore ALL</a> </li>
+                        <li><a id="download_link" onclick="exportTableToCSV()">Download Current PEARL</a> </li>
+                        <li><a>Select Camera View</a></li>
+                        <li><a>
+                          <select name="Camera View" id="camera_view">
+                            <option value="PX">From Positive X</option>
+                            <option value="NX">From Negative X</option>
+                            <option value="PY">From Positive Y</option>
+                            <option value="NY">From Negative Y</option>
+                            <option value="PZ">From Positive Z</option>
+                            <option value="NZ">From Negative Z</option>
+                          </select>
+
+                          <script>
+                              var drop_down = document.getElementById("camera_view");
+                              drop_down.onchange = function() {
+                                  update_camera(drop_down.value);
+                              };
+                          </script>
+                        </a>
+                        </li>
                         <!-- <li><a onclick="document.getElementById('sfeature').style.display='block'">Search Feature</a></li>
-                        <li><a onclick="changeGrid()"> Change axis Style </a> </li>
                         <li><a onclick="spreadAlert()">Spread</a></li>
                         <li><input id="slider" type="range" min="10" max="100" step="5" oninput="sliderChange(this.value)"></li>
                         <li><a onclick="undo()">Undo</a></li> -->
@@ -72,7 +93,7 @@
                     <canvas id="mycanvas"></canvas>
                 </div>
                 <div id="bottom-bar">
-                    <select name="Camera View" id="camera_view">
+<!--                     <select name="Camera View" id="camera_view">
                         <option value="PX">From Positive X</option>
                         <option value="NX">From Negative X</option>
                         <option value="PY">From Positive Y</option>
@@ -88,7 +109,7 @@
                         };
 
                     </script>
-
+ -->
                     <h4 id="he4">
                         Basic Info of Pearl
                     </h4>

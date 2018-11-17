@@ -7,6 +7,7 @@ var screenW = 0.75*window.innerWidth;
 var screenH = 0.75*window.innerHeight; /*SCREEN*/
 var pearl_3d_obj_map = {};
 var reverse_pearl_3d_obj_map = {};
+var reverse_pearl_3d_obj_map2 = {};
 var attribute_list = [];
 var noofSec = Math.pow(2,6);
 var scrollFactor = 500.0;
@@ -15,6 +16,7 @@ var current_cluster_id = null;
 var currPearlN = null;
 var zperiod = 1.0;
 var scaleFactor = 1.0;
+var currPearls;
 
 var mouse_down = function(event) {
 
@@ -29,7 +31,7 @@ var mouse_down = function(event) {
     var chX,chY;
     chX = 2 * (mX/screenW) - 1;
     chY = 1 - 2 * (mY/screenH);
-    console.log(chX, chY);
+    // console.log(chX, chY);
     mouseVec.x = chX;
     mouseVec.y = chY;
     var raycaster = new THREE.Raycaster();
@@ -39,42 +41,29 @@ var mouse_down = function(event) {
     // for(var i = 0; i<intersects.length; i++) {
     //     intersects[i].object.material.color.set(0x000000);
     // }
-    console.log(intersects);
+    // console.log(intersects);
     // intersects[0].object.material.color.set(0x000000);
 
     if(intersects.length != 0) {
         currPearlN = pearl_3d_obj_map[intersects[0].object.id];
-        console.log("cool");
-        console.log(currently_selected);
-        console.log(current_actual_color);
         if(currently_selected!=null)
         {
             if(currPearlN!=currently_selected["bead_no"] || current_cluster_id!=currently_selected["cluster_no"])
             {
-                console.log("boom");
                 var obj = scene.getObjectById(reverse_pearl_3d_obj_map[currently_selected["bead_no"]])
-                obj.material.color.set(current_actual_color);
+                obj.material.color.set(currPearls['shapes'][currently_selected["bead_no"]]['c']);
             }
-            for(i=0;i<intersects.length;i++)
-            {
-                if(intersects[i].object.material.color['r']!=0 || intersects[i].object.material.color['g']!=0 || intersects[i].object.material.color['b']!=0)
-                {
-                    current_actual_color = intersects[i].object.material.color;
-                    break;
-                }
-            }
-                intersects[0].object.material.color.set(0x000000);
-        }
-        else {
-            current_actual_color = intersects[0].object.material.color;
             intersects[0].object.material.color.set(0x000000);
         }
-        console.log(currPearlN);
+        else {
+            intersects[0].object.material.color.set(0x000000);
+        }
         getBead(currPearlN, current_cluster_id,1);
     }
 
     return ;
 }
+
 var mouse_move = function(event) {
 
     event.preventDefault();
@@ -88,7 +77,6 @@ var mouse_move = function(event) {
     var chX,chY;
     chX = 2 * (mX/screenW) - 1;
     chY = 1 - 2 * (mY/screenH);
-    console.log(chX, chY);
     mouseVec.x = chX;
     mouseVec.y = chY;
     var raycaster = new THREE.Raycaster();
@@ -103,7 +91,6 @@ var mouse_move = function(event) {
         if(intersects[0].object.type=="Mesh")
         {
             currPearlN = pearl_3d_obj_map[intersects[0].object.id];
-            console.log(currPearlN);
             getBead(currPearlN, current_cluster_id,0);
         }
     }
@@ -126,12 +113,11 @@ var wheel_movement = function(event) {
 }
 
 var pan = function(event){
-    console.log("oh yeah")
+    // console.log("oh yeah")
 }
 
-function makeWireFrame(shapedic, pearl_number)
-{
-    console.log(shapedic)
+function makeWireFrame(shapedic, pearl_number){
+
     var ret;
     var geom;
     var rad = shapedic['r']*2;
@@ -141,18 +127,14 @@ function makeWireFrame(shapedic, pearl_number)
     }
     if(shapedic['s']==2)
     {
-        console.log("Yo I am sphere")
         geom =  new THREE.SphereGeometry( rad, 32, 16 );
         return "nod"
     }
     else if(shapedic['s']==100)
     {
-        console.log("Yo I am cube")
         geom =  new THREE.CubeGeometry( 2*rad, 2*rad, 2*rad );
-
     }
     else {
-        console.log("Yo I am rhombus3D")
         geom =  new THREE.OctahedronGeometry( 2*rad, 0);
         // geom =  new THREE.OctahedronGeometry( 1, 0);
     }
@@ -164,13 +146,11 @@ function makeWireFrame(shapedic, pearl_number)
     ret = new THREE.LineSegments( edges, new THREE.LineBasicMaterial({color: 0x000000}) );
     ret.position.set(10*shapedic['x'],10*shapedic['y'],10*shapedic['z']);
     pearl_3d_obj_map[ret.id] = pearl_number;
-    reverse_pearl_3d_obj_map[pearl_number] = ret.id;
+    reverse_pearl_3d_obj_map2[pearl_number] = ret.id;
     return ret
 }
 
-function makeShape(shapedic, pearl_number)
-{
-    console.log(shapedic)
+function makeShape(shapedic, pearl_number){
     var ret;
     var geom;
     var rad = shapedic['r']*2;
@@ -180,18 +160,15 @@ function makeShape(shapedic, pearl_number)
     }
     if(shapedic['s']==2)
     {
-        console.log("Yo I am sphere")
         geom =  new THREE.SphereGeometry( rad, 32, 16 );
 
     }
     else if(shapedic['s']==100)
     {
-        console.log("Yo I am cube")
         geom =  new THREE.CubeGeometry( 2*rad, 2*rad, 2*rad );
 
     }
     else {
-        console.log("Yo I am rhombus3D")
         geom =  new THREE.OctahedronGeometry( 2*rad, 0);
         // geom =  new THREE.OctahedronGeometry( 1, 0);
     }
@@ -212,14 +189,11 @@ function makeShape(shapedic, pearl_number)
     return ret
 }
 
-
-
 function makeAxis(origin,terminus,size,color){
     var direction = new THREE.Vector3().subVectors(terminus, origin).normalize();
     var arrow = new THREE.ArrowHelper(direction, origin,size,color);
     return arrow;
 }
-
 
 function makeTextSprite(message, fontColor, materialColor) {
     var fontface = "Georgia";
@@ -258,7 +232,10 @@ function makeTextSprite(message, fontColor, materialColor) {
 }
 
 function myFunction(pearls, cirgrid) {
-
+                        currently_loaded = null;
+                        currently_selected = null;
+                        to_be_deleted = null;
+                        currPearls = pearls;
                         current_cluster_centroid = pearls['cluster_centroid'];
                         canvasC = document.getElementById('mycanvas')
                         var renderer = new THREE.WebGLRenderer({
@@ -352,7 +329,6 @@ function myFunction(pearls, cirgrid) {
                         zperiod = max(1.0,zmax/10.0);
                         zperiod = Math.floor(zperiod);
                         zperiod *= 2;
-                        console.log(zperiod);
                         var fontColor = {
                             r: 0,
                             g: 0,
@@ -371,8 +347,7 @@ function myFunction(pearls, cirgrid) {
                             spritey.scale.set(200.0*scrollFactor/500.0,100.0*scrollFactor/500.0,2.0*scrollFactor/500.0);
                             scene.add(spritey);
                         }
-                        console.log(zmax);
-                        console.log(zperiod);
+
                         document.getElementById('mycanvas').addEventListener("wheel", wheel_movement, false);
                         document.getElementById('mycanvas').addEventListener("mousedown", mouse_down, false);
                         document.getElementById('mycanvas').addEventListener("mousemove",mouse_move,false);
@@ -381,6 +356,18 @@ function myFunction(pearls, cirgrid) {
                         // var obj = makeShape(Mytestshape, 1);
                         // scene.add(obj);
                         function render() {
+
+                            var obj_id1=null,obj_id2=null;
+                            if(to_be_deleted!=null)
+                            {
+                                obj_id1 = reverse_pearl_3d_obj_map[to_be_deleted["bead_no"]]; 
+                                obj_id2 = reverse_pearl_3d_obj_map2[to_be_deleted["bead_no"]];
+                                scene.remove(scene.getObjectById(obj_id1)); 
+                                scene.remove(scene.getObjectById(obj_id2)); 
+                                to_be_deleted =null;
+                            }
+
+
 
                             new_camera = new THREE.PerspectiveCamera(45, screenW/screenH , 1, 3000);
                             camera = new_camera;
@@ -397,6 +384,7 @@ function myFunction(pearls, cirgrid) {
                                     var tmpi = scene.children[i].name;
                                     scene.children[i].position.set(0,0,10*tmpi*zperiod+8-(8*(500.0-scrollFactor)/500.0));
                                 }
+                                
                             }
 
                             switch (CAMER_VIEW) {
@@ -449,5 +437,4 @@ function myFunction(pearls, cirgrid) {
                             renderer.render(scene, new_camera);
                         }
                         return 0;
-
 }
