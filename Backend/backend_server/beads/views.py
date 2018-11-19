@@ -89,16 +89,28 @@ def deletePearl(request):
 
 
 
-@csrf_exempt
+# @csrf_exempt
 def filterAttributes(request):
-    attributes_to_keep = request.POST.getlist('attributes[]')
+
+    length = int(request.GET.get('length'));
+    attributes_to_keep = []
+    print request
+
+    for i in range(length):
+        key = 'attribute_' + str(i)
+        val = str(request.GET.get(key))
+        # print key, val
+        attributes_to_keep.append(val)
 
     data = pandas.read_csv(current_file_path[1:]);
     data = data[attributes_to_keep]
     # print data.head()
     data.to_csv(current_data_path[1:], encoding='utf-8', index=False)
 
-    return JsonResponse({'result': True}, safe=False)
+    output = {
+        'result' : 1,
+    }
+    return JsonResponse(output, safe=False)
 
 def getBead(request):
 

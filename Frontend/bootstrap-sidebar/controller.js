@@ -97,7 +97,6 @@ function deletePearl() {
         handle_request(url, data, suc);
     }
     return ;
-
 }
 
 function deletePearlFrontend(){
@@ -147,7 +146,8 @@ function filter_attributes() {
     checked = [];
 
     checked.push(container.childNodes[0].name);
-    for(i=1; i<container.childElementCount; i++) {
+
+    for(i=2; i<container.childElementCount; i+=2) {
         if(container.childNodes[i].type == 'checkbox' && container.childNodes[i].checked) {
             checked.push(container.childNodes[i].name);
         }
@@ -157,15 +157,22 @@ function filter_attributes() {
         window.alert("The attributes are filtered in backend please recluster !\n Happy Data Mining :)")
     }
 
-    console.log(checked);
     data = {
-        'attributes[]' : checked,
+        'length' : checked.length
     }
-    console.log(data['attributes']);
 
+    for(var j=0; j<checked.length; j++) {
+        key = "attribute_" + j;
+        val = checked[j];
+        data[key] = val; 
+    }
     var url = "http://127.0.0.1:8000/beads/filterattributes"
-    handle_request(url, data, suc, "POST");
-    return ;
+
+    var modal = document.getElementById('attfilter');
+    modal.style.display = "none";
+
+    handle_request(url, data, suc);
+    return false;
 }
 
 function getFrom() {
@@ -198,7 +205,7 @@ function getFrom() {
 function makeTable(result, n, m) {
     var tbl = document.createElement("table");
     var tblBody = document.createElement("tbody");
-    tbl.setAttribute("id", "    ");
+    tbl.setAttribute("id", "data_table");
 
     var r = document.createElement("tr");
 

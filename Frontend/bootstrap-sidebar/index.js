@@ -112,8 +112,9 @@ var wheel_movement = function(event) {
     // changeScrollFac = event.deltaY;
 }
 
-var pan = function(event){
-    // console.log("oh yeah")
+var pan = function(event)
+{
+    console.log("oh yeah")
 }
 
 function makeWireFrame(shapedic, pearl_number){
@@ -311,15 +312,22 @@ function myFunction(pearls, cirgrid) {
 
                         var zmax = -1.0;
                         scrollFactor = 500.0;
+                        var rmax = 1.0;
                         // Drawing objects
+
+                        for(var key in pearls['shapes']) {
+                            var shape = pearls['shapes'][key];
+                            rmax = max(rmax,shape['r']);
+                        }
 
                         for (var key in pearls['shapes']) {
                           var shape = pearls['shapes'][key];
 
                           if(Math.abs(shape['z'])>zmax){
                               zmax = Math.abs(shape['z']);
-                          }
-
+                        }
+                          // shape['r'] = 50.0 * shape['r']/rmax;
+                          shape['r'] = min(50.0,shape['r']);
                           var obj = makeShape(shape, parseInt(key));
                           var wireObj = makeWireFrame(shape, parseInt(key));
                           scene.add(obj)
@@ -347,6 +355,14 @@ function myFunction(pearls, cirgrid) {
                             spritey.scale.set(200.0*scrollFactor/500.0,100.0*scrollFactor/500.0,2.0*scrollFactor/500.0);
                             scene.add(spritey);
                         }
+                        // for(var i=1;i<12;i++)
+                        // {
+                        //     var spritey = makeTextSprite(''+i*zperiod*-1, fontColor)
+                        //     spritey.position.set(0,0,10*-1*i*zperiod+8);
+                        //     spritey.name = i;
+                        //     spritey.scale.set(200.0*scrollFactor/500.0,100.0*scrollFactor/500.0,2.0*scrollFactor/500.0);
+                        //     scene.add(spritey);
+                        // }
 
                         document.getElementById('mycanvas').addEventListener("wheel", wheel_movement, false);
                         document.getElementById('mycanvas').addEventListener("mousedown", mouse_down, false);
