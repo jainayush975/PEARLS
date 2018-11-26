@@ -17,6 +17,8 @@ var currPearlN = null;
 var zperiod = 1.0;
 var scaleFactor = 1.0;
 var currPearls;
+var cameraZ = 0;
+var cameraY = 0;
 var acRfac=10.0;
 
 var mouse_down = function(event) {
@@ -113,9 +115,22 @@ var wheel_movement = function(event) {
     // changeScrollFac = event.deltaY;
 }
 
-var pan = function(event)
-{
-    console.log("oh yeah")
+var key_down = function(event){
+    var key_code = event.keyCode;
+
+    if(key_code==37) {
+        cameraY -= scrollFactor/500; 
+    }
+    else if(key_code==39) {
+        cameraY += scrollFactor/500; 
+    }
+    else if(key_code==38) {
+        cameraZ += scrollFactor/500; 
+    }
+    else if(key_code==40) {
+        cameraZ -= scrollFactor/500; 
+    }
+    return ;
 }
 
 function makeWireFrame(shapedic, pearl_number){
@@ -368,8 +383,8 @@ function myFunction(pearls, cirgrid) {
 
                         document.getElementById('mycanvas').addEventListener("wheel", wheel_movement, false);
                         document.getElementById('mycanvas').addEventListener("mousedown", mouse_down, false);
-                        document.getElementById('mycanvas').addEventListener("mousemove",mouse_move,false);
-                        // document.addEventListener("keydown",pan ,false);
+                        document.getElementById('mycanvas').addEventListener("mousemove", mouse_move, false);
+
                         // var Mytestshape ={'s':1,'r':1,'x':0,'y':0,'z':0,'c':'#00ff00'};
                         // var obj = makeShape(Mytestshape, 1);
                         // scene.add(obj);
@@ -407,7 +422,7 @@ function myFunction(pearls, cirgrid) {
 
                             switch (CAMER_VIEW) {
                                 case 'PX':
-                                    new_camera.position.set(scrollFactor, 0, 0);
+                                    new_camera.position.set(scrollFactor, cameraY, cameraZ);
                                     new_camera.up = new THREE.Vector3(0, 0, 1);
                                     light1.position.set(scrollFactor,0,0).normalize();
                                     scene.add(y_axisp);scene.add(y_axisn);scene.add(z_axisp);scene.add(z_axisn);
@@ -443,14 +458,14 @@ function myFunction(pearls, cirgrid) {
                                     scene.add(x_axisp);scene.add(x_axisn);scene.add(y_axisp);scene.add(y_axisn);
                                     break;
                                 default:
-                                    new_camera.position.set(scrollFactor, 0, 0);
+                                    new_camera.position.set(scrollFactor, cameraY, cameraZ);
                                     new_camera.up = new THREE.Vector3(1, 0, 0);
                                     light1.position.set(scrollFactor, 0, 0).normalize();
                                     scene.add(y_axisp);scene.add(y_axisn);scene.add(z_axisp);scene.add(z_axisn);
                                     break;
                             }
 
-                            new_camera.lookAt(new THREE.Vector3(0, 0, 0));
+                            new_camera.lookAt(new THREE.Vector3(0, cameraY, cameraZ));
                             animation_id = requestAnimationFrame(render);
                             renderer.render(scene, new_camera);
                         }

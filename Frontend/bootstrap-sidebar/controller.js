@@ -298,6 +298,7 @@ function addClusterList(result) {
 }
 
 function searchVector() {
+
     var loader = new THREE.FontLoader();
     let font = loader.parse(fontJSON);
     var vector = document.getElementById("feature_vector").value;
@@ -318,7 +319,6 @@ function searchVector() {
     handle_request(url, data, suc);
     // addClusterList(val);
     return false;
-
 }
 
 function makeClusterDB() {
@@ -407,7 +407,10 @@ function getCluster(i) {
         // document.body.removeEventListener("mouseup", mouse_up);
         document.body.removeEventListener("mousemove", mouse_move);
         document.body.removeEventListener("wheel", wheel_movement);
+        // document.body.removeEventListener("keydown");
 
+        var cameraZ = 0;
+        var cameraY = 0;
         var camera=null;
         var scene=null;
         var canvasC=null;
