@@ -266,6 +266,8 @@ function getCluster(i) {
         deleted_objects = [];
         var isDone = true;
         deleted_beads_lst = [];
+        currently_loaded = null;
+        currently_selected = null;
         // var rFac = 5.0;
         return myFunction(result,gridType);
     }

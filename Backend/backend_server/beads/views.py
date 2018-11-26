@@ -85,6 +85,9 @@ def deletePearl(request):
 
     data.to_csv(current_data_path[1:], encoding='utf-8', index=False)
 
+    # with open('modified_data_points.json', 'w') as json_data:
+    #     json.dump(data, fp1)
+
     return JsonResponse({'result': True}, safe=False)
 
 

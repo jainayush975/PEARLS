@@ -53,14 +53,14 @@ function downloadCSV(csv, filename) {
 function exportTableToCSV(filename="data.csv") {
     var csv = [];
     var rows = document.querySelectorAll("table tr");
-    
+
     for (var i = 0; i < rows.length; i++) {
         var row = [], cols = rows[i].querySelectorAll("td, th");
-        
-        for (var j = 0; j < cols.length; j++) 
+
+        for (var j = 0; j < cols.length; j++)
             row.push(cols[j].innerText);
-        
-        csv.push(row.join(","));        
+
+        csv.push(row.join(","));
     }
 
     // Download CSV file
@@ -164,7 +164,7 @@ function filter_attributes() {
     for(var j=0; j<checked.length; j++) {
         key = "attribute_" + j;
         val = checked[j];
-        data[key] = val; 
+        data[key] = val;
     }
     var url = "http://127.0.0.1:8000/beads/filterattributes"
 
@@ -414,7 +414,10 @@ function getCluster(i) {
         var screenW = 0.75*window.innerWidth;
         var screenH = 0.75*window.innerHeight; /*SCREEN*/
         var pearl_3d_obj_map = {};
-
+        var reverse_pearl_3d_obj_map = {};
+        var reverse_pearl_3d_obj_map2 = {};
+        currently_loaded = null;
+        currently_selected = null;
         return myFunction(result, gridType);
     }
 
