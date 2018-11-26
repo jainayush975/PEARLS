@@ -17,6 +17,7 @@ var currPearlN = null;
 var zperiod = 1.0;
 var scaleFactor = 1.0;
 var currPearls;
+var acRfac=10.0;
 
 var mouse_down = function(event) {
 
@@ -145,7 +146,8 @@ function makeWireFrame(shapedic, pearl_number){
     //    wireframe: true
     //  });
     ret = new THREE.LineSegments( edges, new THREE.LineBasicMaterial({color: 0x000000}) );
-    ret.position.set(10*shapedic['x'],10*shapedic['y'],10*shapedic['z']);
+    console.log(acRfac);
+    ret.position.set(acRfac*shapedic['x'],acRfac*shapedic['y'],acRfac*shapedic['z']);
     pearl_3d_obj_map[ret.id] = pearl_number;
     reverse_pearl_3d_obj_map2[pearl_number] = ret.id;
     return ret
@@ -183,8 +185,8 @@ function makeShape(shapedic, pearl_number){
      if(shapedic['s']==2)
       Material.opacity=0.7
     ret = new THREE.Mesh( geom, Material );
-    ret.position.set(10*shapedic['x'],10*shapedic['y'],10*shapedic['z']);
-
+    ret.position.set(acRfac*shapedic['x'],acRfac*shapedic['y'],acRfac*shapedic['z']);
+    console.log(acRfac);
     pearl_3d_obj_map[ret.id] = pearl_number;
     reverse_pearl_3d_obj_map[pearl_number]=ret.id;
     return ret
@@ -376,10 +378,10 @@ function myFunction(pearls, cirgrid) {
                             var obj_id1=null,obj_id2=null;
                             if(to_be_deleted!=null)
                             {
-                                obj_id1 = reverse_pearl_3d_obj_map[to_be_deleted["bead_no"]]; 
+                                obj_id1 = reverse_pearl_3d_obj_map[to_be_deleted["bead_no"]];
                                 obj_id2 = reverse_pearl_3d_obj_map2[to_be_deleted["bead_no"]];
-                                scene.remove(scene.getObjectById(obj_id1)); 
-                                scene.remove(scene.getObjectById(obj_id2)); 
+                                scene.remove(scene.getObjectById(obj_id1));
+                                scene.remove(scene.getObjectById(obj_id2));
                                 to_be_deleted =null;
                             }
 
@@ -400,7 +402,7 @@ function myFunction(pearls, cirgrid) {
                                     var tmpi = scene.children[i].name;
                                     scene.children[i].position.set(0,0,10*tmpi*zperiod+8-(8*(500.0-scrollFactor)/500.0));
                                 }
-                                
+
                             }
 
                             switch (CAMER_VIEW) {

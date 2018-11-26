@@ -1,5 +1,5 @@
 var dimension = null;
-acRfac = 1.0;
+acRfac = 10.0;
 gridType = false;
 var CAMER_VIEW = "PX";
 var currently_loaded = null;
@@ -427,7 +427,8 @@ function getCluster(i) {
 }
 
 function sliderChange(val) {
-    acRfac = val/10.0;
+    console.log(val);
+    acRfac = val;
     getCluster(current_cluster_id);
 }
 
