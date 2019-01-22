@@ -119,16 +119,16 @@ var key_down = function(event){
     var key_code = event.keyCode;
 
     if(key_code==37) {
-        cameraY -= scrollFactor/500; 
+        cameraY -= scrollFactor/500;
     }
     else if(key_code==39) {
-        cameraY += scrollFactor/500; 
+        cameraY += scrollFactor/500;
     }
     else if(key_code==38) {
-        cameraZ += scrollFactor/500; 
+        cameraZ += scrollFactor/500;
     }
     else if(key_code==40) {
-        cameraZ -= scrollFactor/500; 
+        cameraZ -= scrollFactor/500;
     }
     return ;
 }
@@ -269,7 +269,7 @@ function myFunction(pearls, cirgrid) {
                         screenH = screenH - screenH%2;
                         renderer.setSize(screenW, screenH);
 
-                        camera = new THREE.PerspectiveCamera(45, screenW/screenH , 1, 3000);
+                        camera = new THREE.PerspectiveCamera(45, screenW/screenH , 1, 10000);
 
                         scene = new THREE.Scene();
                         camera.position.set(scrollFactor, 0, 0);
@@ -402,7 +402,7 @@ function myFunction(pearls, cirgrid) {
 
 
 
-                            new_camera = new THREE.PerspectiveCamera(45, screenW/screenH , 1, 3000);
+                            new_camera = new THREE.PerspectiveCamera(45, screenW/screenH , 1, 10000);
                             camera = new_camera;
                             for(i=0; i<scene.children.length; i++) {
                                 if(scene.children[i].type=="Object3D") {

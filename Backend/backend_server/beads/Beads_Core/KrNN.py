@@ -6,12 +6,13 @@ import math
 from sklearn import datasets
 import matplotlib.pyplot as plt
 
+
 class Graph(object):
     def __init__(self, g, n, m):
         self.graph = g
         self.nodes = n
         self.edges = m
-        self.explored = [0]*(n+1)
+        self.explored = [0] * (n + 1)
 
     def reverse(self):
         graph = {}
@@ -21,6 +22,7 @@ class Graph(object):
                     graph[j] = []
                 graph[j].append(i)
         return Graph(graph, self.nodes, self.edges)
+
 
 def scc(g):
     results = []
@@ -41,7 +43,8 @@ def scc(g):
         results.append(scc_stack)
     return results
 
-def dfs(g,u,stack):
+
+def dfs(g, u, stack):
     g.explored[u] = 1
     if u in g.graph:
         for v in g.graph[u]:
@@ -50,9 +53,9 @@ def dfs(g,u,stack):
     stack.append(u)
 
 
-def KrNN(data,k):
+def KrNN(data, k):
     data = np.array(data)
-    nbrs = NearestNeighbors(n_neighbors=k,algorithm='auto').fit(data)
+    nbrs = NearestNeighbors(n_neighbors=k, algorithm='auto').fit(data)
     # Make reverse neighbors graph
     RG = {}
     distances, indices = nbrs.kneighbors(data)
@@ -60,33 +63,33 @@ def KrNN(data,k):
     for i in range(indices.shape[0]):
         for j in range(indices.shape[1]):
             if indices[i][j] not in RG:
-                RG[indices[i][j]]=[i]
+                RG[indices[i][j]] = [i]
             else:
                 RG[indices[i][j]].append(i)
     # print RG
     RGG = {}
     RGL = {}
     for i in RG:
-        if len(RG[i])>=k:
+        if len(RG[i]) >= k:
             RGG[i] = RG[i]
         else:
             RGL[i] = RG[i]
     # print RGG
-    G = Graph(RGG,data.shape[0],data.shape[0]*k)
+    G = Graph(RGG, data.shape[0], data.shape[0] * k)
     results = [sorted(result) for result in scc(G)]
     results.sort(key=lambda result: result[0])
     cldic = {}
     whclu = {}
 
     for i in range(len(results)):
-        cldic[i] =[]
+        cldic[i] = []
         for j in results[i]:
             cldic[i].append(data[j])
             whclu[j] = i
 
     # return cldic
     # Classifying outliers
-    kdth = math.ceil(k/data.shape[1])
+    kdth = math.ceil(k / data.shape[1])
     # print kdth
     outliers = []
     for i in RGL:
@@ -94,12 +97,12 @@ def KrNN(data,k):
         for j in RGL[i]:
             if j in RGG:
                 if whclu[j] not in clu:
-                    clu[whclu[j]]=1
+                    clu[whclu[j]] = 1
                 else:
                     clu[whclu[j]] += 1
-        if len(clu)!=0:
+        if len(clu) != 0:
             maxik = max(clu.iteritems(), key=operator.itemgetter(1))[0]
-            if clu[maxik]>=kdth:
+            if clu[maxik] >= kdth:
                 cldic[maxik].append(data[i])
                 whclu[i] = maxik
             else:
@@ -111,5 +114,7 @@ def KrNN(data,k):
 
 
 if __name__ == '__main__':
-    X = np.array([[5,5],[5,6],[4,5],[4,6],[-5,5],[-5,6],[-4,5],[-4,6],[5,-5],[5,-6],[4,-5],[4,-6],[-5,-5],[-5,-6],[-4,-5],[-4,-6]])
-    print KrNN(X,4)
+    X = np.array([[5, 5], [5, 6], [4, 5], [4, 6], [-5, 5], [-5, 6], [-4, 5],
+                  [-4, 6], [5, -5], [5, -6], [4, -5], [4, -6], [-5, -5],
+                  [-5, -6], [-4, -5], [-4, -6]])
+    print KrNN(X, 4)
