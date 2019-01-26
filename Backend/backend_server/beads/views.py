@@ -16,6 +16,7 @@ from django.views.decorators.csrf import csrf_exempt
 
 current_file_path = ""
 current_data_path = ""
+no_of_cluster = 0
 
 class FileView(APIView):
     parser_classes = (MultiPartParser, FormParser)
@@ -90,6 +91,13 @@ def deletePearl(request):
 
     return JsonResponse({'result': True}, safe=False)
 
+def getNoOfClusters(request):
+
+    global no_of_cluster
+    output = {
+        'no_of_cluster' : no_of_cluster,
+    }
+    return JsonResponse(output, safe=False)
 
 
 # @csrf_exempt
@@ -127,6 +135,7 @@ def getBead(request):
 
 def updateDB(request):
 
+    global no_of_cluster
     no_of_cluster = int(request.GET.get('no_of_cluster'))
     no_of_beads = int(request.GET.get('no_of_beads'))
     first_algo = str(request.GET.get('first_algo'))
@@ -151,16 +160,6 @@ def updateDB(request):
         for bd in shapes:
             bdb = PEARLS(cluster_id=cluster, centroid_x=shapes[bd]['x'], centroid_y=shapes[bd]['y'], centroid_z=shapes[bd]['z'], centroid_r=shapes[bd]['r'], centroid_s=shapes[bd]['s'], centroid_c=shapes[bd]['c'])
             bdb.save()
-
-    # for cluster in data:
-    #     all_bead_points = data[cluster]['points']
-    #
-    #     for bead in all_bead_points:
-    #         points = all_bead_points[bead]
-    #
-    #         for point in points:
-    #             dbpnt = Points(cluster_id=cluster, beads_id=bead, point_x=point['x'], point_y=point['y'], point_c=point['c'])
-    #             dbpnt.save()
 
     cluster_centroids = {}
     for cluster in data:
@@ -207,14 +206,6 @@ def getCluster(request):
         all_shapes[i] = dic
         i+=1
 
-    # for i in range(len(all_shapes)):
-    #     points = Points.objects.filter(cluster_id=clusterno, beads_id=i)
-    #     points_of_this_bead = []
-    #     for point in points:
-    #         dic = point.convert_to_dict()
-    #         points_of_this_bead.append(dic)
-    #     all_points[i] = points_of_this_bead
-
     with open('cluster_centroids.json') as json_data:
         data = json.load(json_data)
 
@@ -249,7 +240,4 @@ def searchVector(request):
     return JsonResponse(obj, safe=False)
 
 def index(request):
-
     output = handleGet()
-        # data = display.main(clusterno)
-        # # print data

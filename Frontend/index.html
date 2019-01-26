@@ -5,107 +5,109 @@
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <meta http-equiv="X-UA-Compatible" content="IE=edge">
 
-        <title>Collapsible sidebar using Bootstrap 3</title>
+        <title>PEARLS Data Visualisation Toolkit</title>
 
          <!-- Bootstrap CSS CDN -->
         <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
         <!-- Our Custom CSS -->
-        <link rel="stylesheet" href="css/style.css">
-        <!-- <link rel="stylesheet" type="text/css" href="css1/grid.css" media="all">
-        <link rel="stylesheet" type="text/css" href="css1/fonts.css" media="all">
-        <link rel="stylesheet" type="text/css" href="css1/demo.css" media="all"> -->
+        <link rel="stylesheet" href="./css/style.css">
     </head>
     <body>
 
-    <script src="three.js"></script>
-    <script src="font.js"></script>
+    <script src="./js/three.min.js"></script>
+    <script src="./js/font.js"></script>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
-    <script src="index.js"></script>
-    <script src="controller.js"></script>
-    <script src="upload_script.js"></script>
+    <script src="./js/index.js"></script>
+    <script src="./js/controller.js"></script>
+    <script src="./js/global_vars.js"></script>
+    <script src="./js/update_ui.js"></script>
+    <script src="./js/util.js"></script>
+    <script src="./js/upload_script.js"></script>
 
 
+    <div id="main_page">
 
-        <div class="wrapper">
-            <!-- Sidebar Holder -->
-            <!-- <div id="scrollable"> -->
+        <div id="left_bar">
             <div id="sidebar">
                 <div id="full_sidebar">
                     <div class="sidebar-header">
-                        <h3>BEADS Data Visualisation</h3>
+                        <h3>PEARL Data Visualisation</h3>
                     </div>
 
                     <ul class="list-unstyled components">
                         <li><a>
                             <form>
-                                <!-- <div class="row"> -->
-                                    <!-- <div class="column-small-12 padd0 align-center"> -->
-                                    <!-- </div> -->
                                     <div class="column-small-12 padd0">
                                         <input type="file" name="upl" id="upl" />
                                     </div>
-                                <!-- </div> -->
                             </form>
                         </a></li>
                         <li><a>
                             <div id="drop-box">
                                 select Files
-                                <!-- <p>Select Files</p> -->
                             </div>
                         </a></li>
                     </ul>
                     <ul class="list-unstyled components">
-                        <li><a onclick="document.getElementById('id01').style.display='block'">Get Form</a></li>
-                        <li><a onclick="document.getElementById('sfeature').style.display='block'">Search Feature</a></li>
-                        <li> <a onclick="changeGrid()"> Change axis Style </a> </li>
-                        <li><a onclick="spreadAlert()">Spread</a></li>
-                        <li><input id="slider" type="range" min="10" max="100" step="5" oninput="sliderChange(this.value)"></li>
-                        <li><a onclick="undo()">Undo</a></li>
+                        <li><a onclick="getFrom()">Cluster-Recluster</a></li>
+                        <li><a onclick="attFilterForm()">Attribute Filtering</a></li>
+                        <li><a onclick="deletePearl()">Delete Current PEARL</a> </li>
+                        <li><a onclick="restorePearl()">Restore ALL</a> </li>
+                        <li><a id="download_link" onclick="exportTableToCSV()">Download Current PEARL</a> </li>
+                        <li><a>Select Camera View</a></li>
+                        <li><a>
+                          <select name="Camera View" id="camera_view">
+                            <option value="PX">From Positive X</option>
+                            <option value="NX">From Negative X</option>
+                            <option value="PY">From Positive Y</option>
+                            <option value="NY">From Negative Y</option>
+                            <option value="PZ">From Positive Z</option>
+                            <option value="NZ">From Negative Z</option>
+                          </select>
+
+                          <script>
+                              var drop_down = document.getElementById("camera_view");
+                              drop_down.onchange = function() {
+                                  update_camera(drop_down.value);
+                              };
+                          </script>
+                        </a>
+                        </li>
                     </ul>
                     <ul class="list-unstyled components" id="cluster-list">
                     </ul>
                 </div>
             </div>
+        </div>
 
-            <div id="content">
-                <div>
-                    <canvas id="mycanvas"></canvas>
-                </div>
-                <div id="bottom-bar">
-                    <h4 id="he4">
-                        General Instructions
-                    </h4>
-
-                    <ul id="list1">
-                        <li>Upload csv file from top left corner upload file option.</li>
-                        <li>Use form to provide paramenters and choosing clustering algorithm.</li>
-                        <li>Cluster list would be in left sidebar after uploading file and filling Form.</li>
-                        <li>Basic features are accessible on left sidebar for use. They are self explanatory.</li>
-                        <li>By left-click on bead you get Bead Info in right sidebar and By right click you can delete Bead.</li>
-                    </ul>
-
-                    <!-- <h3> Upload File </h3> -->
-                    <!-- <div id="atrri-box">
-                        Gogi
-                    </div> -->
+        <div id="center_area">
+            <div id="canvasContainer">
+                <canvas id="mycanvas"></canvas>
+            </div>
+            <div id="bottom-bar">
+                <h4 id="he4">
+                    Basic Info of Pearl
+                </h4>
+                <div id="basicinfo">
                 </div>
             </div>
+        </div>
 
+        <div id="right_bar">
             <div id="sidebar1">
-                    <!-- <div class="sidebar-header">
-                        <h3> BEAD Info </h3>
-                    </div> -->
                     <div id="infoBox">
                     </div>
             </div>
-
         </div>
+
+    </div>
+
+
         <div id="id01" class="modal" class="form_modal">
 
           <form class="modal-content animate" onsubmit="return makeClusterDB()">
               <div class="imgcontainer">
                 <span onclick="document.getElementById('id01').style.display='none'" class="close" title="Close Modal">&times;</span>
-                <!-- <img src="img_avatar2.png" alt="Avatar" class="avatar"> -->
               </div>
 
             <div class="container">
@@ -130,6 +132,16 @@
               <label for="nobeads"><b>Number Of Beads</b></label>
               <input type="number" placeholder="Number of Cluster" name="nobeads" id="number-of-beads" class="form_select" required>
               <br>
+
+              <label for="dd"><b>Select Data Dimension</b></label>
+              <select name="dd" class="form_select" id="dd">
+                <option value="no_data_dimension">No Data Dimension</option>
+              </select>
+              <br>
+
+            <label for="nobins"><b>Number Of Bins</b></label>
+            <input type="number" placeholder="Number of Bins" name="nobins" id="number-of-bins" class="form_select" required>
+            <br>
 
             </div>
 
@@ -160,6 +172,25 @@
           </form>
         </div>
 
+        <div id="attfilter" class="modal" class="form_modal">
+
+          <form class="modal-content animate" onsubmit="return filter_attributes()">
+              <div class="imgcontainer">
+                <span onclick="document.getElementById('attfilter').style.display='none'" class="close" title="Close Modal">&times;</span>
+                <!-- <img src="img_avatar2.png" alt="Avatar" class="avatar"> -->
+              </div>
+
+            <div class="container" id="attfilter_container">
+
+            </div>
+
+            <div class="container" style="background-color:#f1f1f1">
+              <button type="button" onclick="document.getElementById('attfilter').style.display='none'" class="cancelbtn">Cancel</button>
+              <span class="psw"><button type="submit">Submit</button></span>
+            </div>
+          </form>
+        </div>
+
         <div id="info_modal" class="modal">
             <div class="imgcontainer">
               <span onclick="document.getElementById('info_modal').style.display='none'" class="close" title="Close Modal">&times;</span>
@@ -171,18 +202,17 @@
         </div>
 
         <script>
-            document.getElementById('slider').value = 10;
-            // Get the modal
+            document.addEventListener('keydown', key_down);
             var modal = document.getElementById('id01');
-            var modal1 = document.getElementById('sfeature');
-            var modal2 = document.getElementById('info_modal');
+            var modal1 = document.getElementById('attfilter');
+            getNoOfClusters();
 
             // When the user clicks anywhere outside of the modal, close it
             window.onclick = function(event) {
                 if (event.target == modal) {
                     modal.style.display = "none";
                     modal1.style.display = "none";
-                    modal2.style.display = "none";
+                    // modal2.style.display = "none";
                 }
             }
         </script>
