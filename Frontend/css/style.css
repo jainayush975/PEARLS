@@ -159,13 +159,10 @@ table#data_table th {
 ----------------------------------------------------- */
 #bottom-bar {
     background-color: #ffffff;
-    /* background-color: #7386D5; */
     color: #000000;
     width: 100%;
-    /* height: -webkit-fill-available; */
     height: 40%;
-    overflow: hidden;
-    /* position: absolute; */
+    overflow: scroll;
     padding: 3%;
     text-align: center;
     align-content: center;
@@ -192,7 +189,6 @@ table#data_table th {
 #content {
     margin : auto;
     float: right;
-    /* padding: 1%; */
     min-height: 100vh;
     transition: all 0.3s;
     width: 60%;

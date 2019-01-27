@@ -216,8 +216,9 @@ function getCluster(i) {
         var camera=null;
         var scene=null;
         var canvasC=null;
-        var screenW = document.getElementById('mycanvas').width;//0.75*window.innerWidth;
-        var screenH = document.getElementById('mycanvas').width;//0.75*window.innerHeight; /*SCREEN*/
+        element = document.getElementById('mycanvas');
+        screenW = Math.floor(element.clientWidth);//Math.floor(window.innerWidth*0.60);
+        screenH = Math.floor(element.clientHeight);//Math.floor(window.innerHeight*0.70);
         var pearl_3d_obj_map = {};
         var reverse_pearl_3d_obj_map = {};
         var reverse_pearl_3d_obj_map2 = {};

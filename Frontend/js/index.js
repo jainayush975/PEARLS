@@ -241,8 +241,9 @@ function myFunction(pearls, cirgrid) {
 
                         renderer.setClearColor('#ffffff');
                         renderer.setPixelRatio(window.devicePixelRatio);
-                        screenW = document.getElementById('mycanvas').width;//Math.floor(window.innerWidth*0.60);
-                        screenH = document.getElementById('mycanvas').height;//Math.floor(window.innerHeight*0.70);
+                        element = document.getElementById('mycanvas');
+                        screenW = Math.floor(element.clientWidth);//Math.floor(window.innerWidth*0.60);
+                        screenH = Math.floor(element.clientHeight);//Math.floor(window.innerHeight*0.70);
                         screenW = screenW - screenW%2;
                         screenH = screenH - screenH%2;
                         renderer.setSize(screenW, screenH);
