@@ -4,7 +4,6 @@ import sys
 import operator
 import math
 from sklearn import datasets
-import matplotlib.pyplot as plt
 
 
 class Graph(object):

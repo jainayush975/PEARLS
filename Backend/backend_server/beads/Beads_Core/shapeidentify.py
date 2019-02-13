@@ -5,7 +5,6 @@ from sklearn import datasets
 from sklearn.cluster import KMeans
 import pandas as pd
 import numpy as np
-import matplotlib.pyplot as plt
 import copy
 import math
 from clustering import kmean
