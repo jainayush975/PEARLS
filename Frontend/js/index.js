@@ -351,11 +351,9 @@ function myFunction(pearls, cirgrid) {
                             }
 
                         }
-
-                        console.log(norm_x_fac)
-                        console.log(norm_y_fac)
+                        console.log("norm_z_value")
                         console.log(norm_z_fac)
-                        console.log(norm_r_fac)
+
                         for(var key in pearls['shapes']){
                             pearls['shapes'][key]['x'] = (pearls['shapes'][key]['x']*100.0)/norm_x_fac
                             pearls['shapes'][key]['y'] = (pearls['shapes'][key]['y']*100.0)/norm_y_fac
@@ -404,7 +402,7 @@ function myFunction(pearls, cirgrid) {
                         // spritey.position.set(0,0,0);
                         for(var i=0;i<12;i++)
                         {
-                            var spritey = makeTextSprite(''+Math.floor((i*zperiod*norm_z_fac)/100), fontColor)
+                            var spritey = makeTextSprite(''+Math.floor((i*zperiod*norm_z_fac))/100, fontColor)
                             spritey.position.set(0,0,10*i*zperiod+8);
                             spritey.name = i;
                             spritey.scale.set(200.0*scrollFactor/500.0,100.0*scrollFactor/500.0,2.0*scrollFactor/500.0);
