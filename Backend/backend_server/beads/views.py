@@ -4,6 +4,7 @@ from .Beads_Core import display
 from .Beads_Core.beadplacement import convert_to_2D
 from beads.models import PEARLS
 import json
+import io
 import csv, os
 import pandas
 from rest_framework.views import APIView
@@ -17,6 +18,37 @@ from django.views.decorators.csrf import csrf_exempt
 current_file_path = ""
 current_data_path = ""
 no_of_cluster = 0
+
+def stringify_keys(d):
+    """Convert a dict's keys to strings if they are not."""
+    for key in d.keys():
+
+        # check inner dict
+        if isinstance(d[key], dict):
+            value = stringify_keys(d[key])
+        else:
+            value = d[key]
+
+        # convert nonstring to string if needed
+        if not isinstance(key, str):
+            try:
+                d[str(key)] = value
+            except Exception:
+                try:
+                    d[repr(key)] = value
+                except Exception:
+                    raise
+
+            # delete old key
+            del d[key]
+    return d
+
+
+def dumpToJson(fileName, data):
+    data1 = stringify_keys(data)
+    with open(fileName, 'w') as fl:
+        json.dump(data1, fl)
+
 
 class FileView(APIView):
     parser_classes = (MultiPartParser, FormParser)
@@ -164,8 +196,8 @@ def updateDB(request):
     cluster_centroids = {}
     for cluster in data:
         cluster_centroids[cluster] = data[cluster]['cluster_centroid']
-    with open('cluster_centroids.json','w') as fp2:
-        json.dump(cluster_centroids, fp2)
+
+    dumpToJson('cluster_centroids.json', cluster_centroids)
 
     for cluster in data:
         dt = {}
@@ -181,8 +213,7 @@ def updateDB(request):
             dt[bead] = bd
         modified_data_points[cluster] = dt
 
-    with open('modified_data_points.json', 'w') as fp1:
-        json.dump(modified_data_points, fp1)
+    dumpToJson('modified_data_points.json', modified_data_points)
 
     output = {
         'result' : 1,
