@@ -72,7 +72,7 @@ def identify_shape(bead, dim):
     clc = find_bead_centroid(bead, dim)
     bead = removeTenPP(bead, dim, 2, clc)  # Currently not implemented
     bestf = None
-    P = [100, 2, 1, 0.5]
+    P = [100000, 2, 1, 0.5]
     p = 0
     """
         Change this part for 3D shape identification
