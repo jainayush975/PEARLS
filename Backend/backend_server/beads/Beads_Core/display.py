@@ -55,7 +55,7 @@ def binpointsdic(data, names, attribute_num, number_of_bins):
             maxi = data[i][attribute_num]
         else:
             maxi = max(maxi, data[i][attribute_num])
-    print maxi, mini
+    # print maxi, mini
 
     range_per_bin = (maxi - mini) / number_of_bins
     if (maxi - mini) % number_of_bins != 0:
@@ -65,7 +65,7 @@ def binpointsdic(data, names, attribute_num, number_of_bins):
     for i in range(number_of_bins):
         tmp_range_upper -= range_per_bin
         ranges_upper.append(tmp_range_upper)
-    print ranges_upper
+    # print ranges_upper
     ret = {}
     retn = {}
     for i in range(len(data)):

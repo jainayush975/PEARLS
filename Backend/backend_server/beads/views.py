@@ -137,7 +137,7 @@ def filterAttributes(request):
 
     length = int(request.GET.get('length'));
     attributes_to_keep = []
-    print request
+    # print request
 
     for i in range(length):
         key = 'attribute_' + str(i)

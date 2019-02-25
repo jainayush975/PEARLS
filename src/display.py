@@ -18,7 +18,6 @@ def display_bead(bead_num,bead, plt, cluster_centroid, dim):
     if obj['s']==2:
         shape = plt.Circle((obj['x'], obj['y']), obj['r'], color=colors[bead_num] ,fill=False)
     else:
-        print obj['t']
         shape = plt.Rectangle((obj['x'], obj['y']), (obj['r']/math.sqrt(2)), (obj['r']/math.sqrt(2)), obj['t']+135, fill=False)
     return shape;
 
@@ -52,10 +51,11 @@ def processEachCluster(data,dim,clunum):
             point2D['y'] += obj['y']
             plt.plot(point2D['x'], point2D['y'], marker='o', markersize=3, color=colors[it])
         it+=1
-    print j
     plt.xlim([-5,5])
     plt.ylim([-5,5])
     plt.show()
+
+
 if __name__=='__main__':
     iris=datasets.load_iris()
     dic = {}
