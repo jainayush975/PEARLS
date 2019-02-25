@@ -1,3 +1,12 @@
+function error_action(xhr, status, error) {
+    if(error == "Internal Server Error") {
+        alert("The system has encountered \"Internal Server Error\"\nEither server is not up or some backend error occured\nIf some error occured please report at below link\nhttps://goo.gl/forms/Lt73a13d3bULiq1I3");
+    }
+    else {
+        alert(error);
+    }
+    return ;
+}
 
 function handle_request(url, data, suc, type="GET") {
 
@@ -7,6 +16,9 @@ function handle_request(url, data, suc, type="GET") {
         data: data,
         success: function(result){
             suc(result);
+        },
+        error: function(xhr, status, error) {
+            error_action(xhr, status, error);
         }
     });
 }
