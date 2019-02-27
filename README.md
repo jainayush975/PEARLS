@@ -10,13 +10,13 @@ Visualizing multi-dimensional data is complex, difficult and well studied topic.
 Basic to [video](https://drive.google.com/file/d/11pMJE3_2l0FiE1oz00ni9bsX1BCxJXwW/view?usp=sharing) can followed to understand kind of use-cases PEARLS is capable of handling.
 
 ## Installation
-- Installation instruction for **Linux** : [Link](./docs/installation)  
-- Installation instruction for **Windows** : [Link](./docs/installation_windows)
+- Installation instruction for **Linux** : [Link](./docs/installation.md)  
+- Installation instruction for **Windows** : [Link](./docs/installation_windows.md)
 
 ## Implementation
 Tool was made as locally deployable website. [Django](https://www.djangoproject.com/) webframework based on python. Frontend was made using javascript. Graphic module made using [THREE.js](https://threejs.org/) (javascript based webGL framework).  
 Detailed explanation of code and how to configure it to your need can be found below:
-- [Backend PEARLS system](./docs/backend)
+- [Backend PEARLS system](./docs/backend.md)
 - [Backend Server Side]()
 - [Frontend]()
 

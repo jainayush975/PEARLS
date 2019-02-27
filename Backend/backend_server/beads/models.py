@@ -13,6 +13,8 @@ class PEARLS(models.Model):
     centroid_r = models.FloatField();
     centroid_s = models.IntegerField();
     centroid_c = models.CharField(max_length=10);
+    is_deleted = models.BooleanField(default=False);
+    pearl_id = models.IntegerField(default=-1);
 
     def convert_to_dict(self):
 

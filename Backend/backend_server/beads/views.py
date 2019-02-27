@@ -13,7 +13,7 @@ from rest_framework.response import Response
 from rest_framework import status
 from .serializers import FileSerializer
 from django.views.decorators.csrf import csrf_exempt
-
+from django.db.models import Q
 
 current_file_path = ""
 current_data_path = ""
@@ -105,6 +105,7 @@ def deletePearl(request):
     cluster_no = int(request.GET.get('cluster_no'))
     pearl_no = int(request.GET.get('pearl_no'))
 
+    # Remove data points from current data file
     with open('modified_data_points.json', 'r') as json_data:
         data = json.load(json_data)
 
@@ -118,8 +119,12 @@ def deletePearl(request):
 
     data.to_csv(current_data_path[1:], encoding='utf-8', index=False)
 
-    # with open('modified_data_points.json', 'w') as json_data:
-    #     json.dump(data, fp1)
+    # Remove pearl to delete from centroid database
+    pearls = PEARLS.objects.filter(Q(cluster_id=cluster_no) & Q(pearl_id=pearl_no))
+
+    print "Debug: Printing pearls size ", len(pearls)
+    pearls[0].is_deleted = True
+    pearls[0].save();
 
     return JsonResponse({'result': True}, safe=False)
 
@@ -187,11 +192,15 @@ def updateDB(request):
     data, dimension, attributes = display.main(no_of_cluster, no_of_beads, first_algo, second_algo, current_data_path, data_dimension, no_of_bins)
     modified_data_points = {}
 
+    # dumpToJson('data.json', data)
+    # print data
     for cluster in data:
         shapes = data[cluster]['shapes']
+        pearl_id = 0
         for bd in shapes:
-            bdb = PEARLS(cluster_id=cluster, centroid_x=shapes[bd]['x'], centroid_y=shapes[bd]['y'], centroid_z=shapes[bd]['z'], centroid_r=shapes[bd]['r'], centroid_s=shapes[bd]['s'], centroid_c=shapes[bd]['c'])
+            bdb = PEARLS(cluster_id=cluster, centroid_x=shapes[bd]['x'], centroid_y=shapes[bd]['y'], centroid_z=shapes[bd]['z'], centroid_r=shapes[bd]['r'], centroid_s=shapes[bd]['s'], centroid_c=shapes[bd]['c'], pearl_id=pearl_id)
             bdb.save()
+            pearl_id += 1
 
     cluster_centroids = {}
     for cluster in data:
@@ -234,7 +243,9 @@ def getCluster(request):
 
     for bead in beads:
         dic = bead.convert_to_dict()
-        all_shapes[i] = dic
+        print bead.is_deleted
+        if not bead.is_deleted:
+            all_shapes[i] = dic
         i+=1
 
     with open('cluster_centroids.json') as json_data:

@@ -433,7 +433,7 @@ function myFunction(pearls, cirgrid) {
                                 obj_id2 = reverse_pearl_3d_obj_map2[to_be_deleted["bead_no"]];
                                 scene.remove(scene.getObjectById(obj_id1));
                                 scene.remove(scene.getObjectById(obj_id2));
-                                to_be_deleted =null;
+                                to_be_deleted=null;
                             }
 
 
