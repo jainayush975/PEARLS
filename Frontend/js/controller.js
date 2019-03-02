@@ -65,6 +65,24 @@ function deletePearl() {
     return ;
 }
 
+function deleteCluster() {
+
+    if(current_cluster_id == null) {
+        window.alert("Please select a cluster to delete");
+    }
+    else {
+        var data = {
+            'cluster_no' : current_cluster_id,
+         }
+         var url = "http://127.0.0.1:8000/beads/deleteCluster"
+         var suc = function(result) {
+             return deleteAllPearlFrontend();
+         }
+         handle_request(url, data, suc);
+    }
+    return ;
+}
+
 function attFilterForm() {
     document.getElementById('attfilter').style.display='block';
 

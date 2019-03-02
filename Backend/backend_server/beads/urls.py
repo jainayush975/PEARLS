@@ -12,6 +12,7 @@ urlpatterns = [
     url('searchvector', views.searchVector, name='searchvector'),
     url('restoreAll', views.restoreAll, name='restoreAll'),
     url('deletePearl', views.deletePearl, name='deletePearl'),
+    url('deleteCluster', views.deleteCluster, name='deleteCluster'),
     url('getallattributelist', views.getAllAttributeList, name='getallattributelist'),
     url('filterattributes', views.filterAttributes, name='filterattributes'),
     url('getattributelist', views.getAttributeList, name='getattributelist'),

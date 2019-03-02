@@ -14,40 +14,10 @@ from rest_framework import status
 from .serializers import FileSerializer
 from django.views.decorators.csrf import csrf_exempt
 from django.db.models import Q
-
+from .utils import *
 current_file_path = ""
 current_data_path = ""
 no_of_cluster = 0
-
-def stringify_keys(d):
-    """Convert a dict's keys to strings if they are not."""
-    for key in d.keys():
-
-        # check inner dict
-        if isinstance(d[key], dict):
-            value = stringify_keys(d[key])
-        else:
-            value = d[key]
-
-        # convert nonstring to string if needed
-        if not isinstance(key, str):
-            try:
-                d[str(key)] = value
-            except Exception:
-                try:
-                    d[repr(key)] = value
-                except Exception:
-                    raise
-
-            # delete old key
-            del d[key]
-    return d
-
-
-def dumpToJson(fileName, data):
-    data1 = stringify_keys(data)
-    with open(fileName, 'w') as fl:
-        json.dump(data1, fl)
 
 
 class FileView(APIView):
@@ -101,30 +71,34 @@ def restoreAll(request):
     data.to_csv(current_data_path[1:], encoding='utf-8', index=False)
     return JsonResponse({'result': True}, safe=False)
 
+def deleteCluster(request):
+    cluster_no = int(request.GET.get('cluster_no'))
+
+    pearls = PEARLS.objects.filter(cluster_id=cluster_no)
+
+    for pearl in pearls:
+        pearl.is_deleted = True
+        pearl.save()
+
+    global current_data_path
+    extractFromClusters("modified_data_points.json", current_data_path[1:])
+
+    return JsonResponse({'result': True}, safe=False)
+
 def deletePearl(request):
     cluster_no = int(request.GET.get('cluster_no'))
     pearl_no = int(request.GET.get('pearl_no'))
 
-    # Remove data points from current data file
-    with open('modified_data_points.json', 'r') as json_data:
-        data = json.load(json_data)
-
-    pearl_to_delete = data[str(cluster_no)][str(pearl_no)]
-    data = pandas.read_csv(current_data_path[1:])
-    attribute = data.columns.values.tolist()[0];
-
-    for point in pearl_to_delete:
-        val = point[0]
-        data = data.drop(data[data[attribute]==val].index)
-
-    data.to_csv(current_data_path[1:], encoding='utf-8', index=False)
 
     # Remove pearl to delete from centroid database
     pearls = PEARLS.objects.filter(Q(cluster_id=cluster_no) & Q(pearl_id=pearl_no))
+    for pearl in pearls:
+        pearl.is_deleted = True
+        pearl.save()
 
-    print "Debug: Printing pearls size ", len(pearls)
-    pearls[0].is_deleted = True
-    pearls[0].save();
+    # # Remove data points from current data file
+    global current_data_path
+    extractFromClusters("modified_data_points.json", current_data_path[1:])
 
     return JsonResponse({'result': True}, safe=False)
 
@@ -147,7 +121,6 @@ def filterAttributes(request):
     for i in range(length):
         key = 'attribute_' + str(i)
         val = str(request.GET.get(key))
-        # print key, val
         attributes_to_keep.append(val)
 
     data = pandas.read_csv(current_file_path[1:]);
@@ -216,12 +189,15 @@ def updateDB(request):
             i = 0
             for points in data[cluster]['acpoints'][bead]:
                 arr = points.tolist()
-                arr.insert(0, data[cluster]['pointName'][bead][i])
+                arr.insert(0, data[(cluster)]['pointName'][bead][i])
                 bd.append(arr)
                 i+=1
-            dt[bead] = bd
-        modified_data_points[cluster] = dt
+            dt[int(bead)] = bd
+        modified_data_points[int(cluster)] = dt
 
+    attribute_dic = dict()
+    attribute_dic[-1] = attributes
+    modified_data_points[-1] = attribute_dic
     dumpToJson('modified_data_points.json', modified_data_points)
 
     output = {
@@ -243,7 +219,6 @@ def getCluster(request):
 
     for bead in beads:
         dic = bead.convert_to_dict()
-        print bead.is_deleted
         if not bead.is_deleted:
             all_shapes[i] = dic
         i+=1

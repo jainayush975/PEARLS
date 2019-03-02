@@ -128,11 +128,15 @@ function addAttributeList(result) {
 
 /////////////////       Delete PEARL Feature          \\\\\\\\\\\\\\\\\\\\\\\
 function deletePearlFrontend(){
+    // getCluster(current_cluster_id);
     to_be_deleted = currently_selected;
     currently_selected = null;
     currently_loaded = null;
 }
 
+function deleteAllPearlFrontend(){
+    getCluster(current_cluster_id);
+}
 
 /////////////////       Download PEARL Feature          \\\\\\\\\\\\\\\\\\\\\\\
 function downloadCSV(csv, filename) {
